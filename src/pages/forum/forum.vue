@@ -1,8 +1,36 @@
 <template>
-  <div class="forum">forum</div>
+  <view class="forum">
+
+  </view>
+  <view>
+    <!-- 轮播图 -->
+    <swiper indicator-dots autoplay circular :interval="3000" :duration="1000">
+      <swiper-item class="swiper-item" v-for="(item, i) in swiperList" :key="i">
+        <view class="swiper-img">
+          <image :src="item.imgSrc" mode="aspectFill"></image>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
 </template>
 
 <script lang="ts" setup>
+import {ref} from 'vue'
+// 轮播图数据
+const swiperList = ref([{
+  i:Number,
+  imgSrc:'https://img.yzcdn.cn/vant/cat.jpeg'
+}])
+// 请求轮播图数据
+
+
 </script>
 
-<style scoped></style>
+<style scoped>
+.swiper-item{
+  text-align: center;
+  background-color: #efefef;
+  height: 100%;
+}
+
+</style>
