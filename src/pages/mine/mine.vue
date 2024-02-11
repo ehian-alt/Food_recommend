@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import test from './components/test/test.vue'
-import login from './components/login/login.vue'
+import userShow from '@/pages/mine/components/userShow/userShow.vue'
+import userSetting from '@/pages/mine/components/userSetting/userSetting.vue'
 </script>
 
 <template>
-  <test></test>
-  <login></login>
+<userShow></userShow>
+<userSetting></userSetting>
 </template>
-<style scoped></style>
+<style scoped>
+</style>

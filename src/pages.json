@@ -30,6 +30,12 @@
 			"style": {
 				"navigationBarTitleText": "推荐"
 			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
 		}
 	],
 	"tabBar": {
@@ -38,30 +44,30 @@
 		"selectedColor": "#ffb6c1",
 		"position": "bottom",
 		"list": [
-		  {
-			"pagePath": "pages/home/home",
-			"text": "首页",
-			"iconPath": "static/icons/home.png",
-			"selectedIconPath": "static/icons/home-fill.png"
-		  },
-		  {
-			"pagePath": "pages/recommend/recommend",
-			"text": "推荐",
-			"iconPath": "static/icons/like.png",
-			"selectedIconPath": "static/icons/like-fill.png"
-		  },
-		  {
-			"pagePath": "pages/forum/forum",
-			"text": "论坛",
-			"iconPath": "static/icons/forum.png",
-			"selectedIconPath": "static/icons/forum-fill.png"
-		  },
-		  {
-			"pagePath": "pages/mine/mine",
-			"text": "我的",
-			"iconPath": "static/icons/user.png",
-			"selectedIconPath": "static/icons/user-fill.png"
-		  }
+			{
+				"pagePath": "pages/home/home",
+				"text": "首页",
+				"iconPath": "static/icons/home.png",
+				"selectedIconPath": "static/icons/home-fill.png"
+			},
+			{
+				"pagePath": "pages/recommend/recommend",
+				"text": "推荐",
+				"iconPath": "static/icons/like.png",
+				"selectedIconPath": "static/icons/like-fill.png"
+			},
+			{
+				"pagePath": "pages/forum/forum",
+				"text": "论坛",
+				"iconPath": "static/icons/forum.png",
+				"selectedIconPath": "static/icons/forum-fill.png"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"text": "我的",
+				"iconPath": "static/icons/user.png",
+				"selectedIconPath": "static/icons/user-fill.png"
+			}
 		]
 	},
 	"globalStyle": {
@@ -70,5 +76,24 @@
 		"navigationBarBackgroundColor": "#ffb6c1",
 		"backgroundColor": "#efefef",
 		"backgroundTextStyle": "dark"
-	}
+	},
+	"subPackages": [
+		{
+			"root": "pages/subpages",
+			"pages": [
+				{
+					"path": "upInfo/upInfo",
+					"style": {
+						"navigationBarTitleText": "个人信息设置"
+					}
+				},
+				{
+					"path": "likes/likes",
+					"style": {
+						"navigationBarTitleText": "我的收藏"
+					}
+				}
+			]
+		}
+	]
 }

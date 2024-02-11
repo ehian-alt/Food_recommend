@@ -3,7 +3,7 @@ const baseURL = 'http://localhost:8080';
 /**
  * 请求封装，
  * 拦截 request请求，
- * 拦截uploadFile文件上传
+ * 拦截 uploadFile文件上传
  */
 const httpInterceptor = {
     // 拦截前
@@ -57,7 +57,7 @@ export const http = <T>(options: UniApp.RequestOptions) => {
                     const userStore = useuserStore()
                     userStore.clearUserInfo()
                     // 跳转到登录login
-                    // uni.navigateTo({url:''})
+                    uni.navigateTo({url:'/pages/login/login'})
                     reject(res)
                 }else{
                     // 其他错误，提示后端传出错误
