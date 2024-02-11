@@ -1,9 +1,9 @@
 <template>
   <view class="setting">
-    <navigator class="setting-item" url="/pages/subpages/upInfo/upInfo" open-type="navigate" hover-class="navigator-hover">
+    <navigator class="setting-item" url="/pages/subpages/upInfo/upInfo" open-type="navigate">
       信息设置
     </navigator>
-    <navigator class="setting-item" url="/pages/subpages/likes/likes" open-type="navigate" hover-class="navigator-hover">
+    <navigator class="setting-item" url="/pages/subpages/likes/likes" open-type="navigate">
       我的收藏
     </navigator>
   </view>

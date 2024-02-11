@@ -29,7 +29,7 @@ const getOpenId = async () => {
   if (res.code === 0) {
     // 失败了，即没有登陆注册过
     console.log("未进行注册");
-    uni.showToast({ title: "账号信息未完善" ,duration:2000})
+    uni.showToast({ icon:'none', title: "账号信息未完善"})
     
     uni.navigateTo({ url: "/pages/mine/upInfo/upInfo" })
   } else {
@@ -37,6 +37,7 @@ const getOpenId = async () => {
     userStore.setUserInfo(res.data);
     // 跳转到首页
     uni.showToast({ 
+      icon:'none',
       title:"登录成功",
       position:'center',
     })
