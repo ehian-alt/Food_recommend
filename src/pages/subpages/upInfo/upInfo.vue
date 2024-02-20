@@ -44,6 +44,7 @@ const comfire = async () => {
     icon: 'none',
     title: '保存成功！'
   })
+  uni.removeStorageSync('myInfo');
   uni.reLaunch({
     url: '/pages/mine/mine',
   })

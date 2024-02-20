@@ -2,6 +2,7 @@
 import homeGird from '@/pages/home/components/homeGird.vue'
 import { http } from '@/utils/http';
 import { onLoad } from '@dcloudio/uni-app';
+import search from '@/pubcomp/search/search.vue'
 
 onLoad(()=>{
   http({
@@ -12,12 +13,9 @@ onLoad(()=>{
 </script>
 
 <template>
+  <search></search>
   <homeGird />
 </template>
 
 <style>
-page{
-  background-color: #f0f0f0;
-  background-color: #781e1e;
-}
 </style>

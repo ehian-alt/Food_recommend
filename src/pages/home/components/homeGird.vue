@@ -38,9 +38,12 @@ const commendList = ref([{
     <!-- 首页宫格 -->
     <view class="gird-container">
         <view class="aitems" v-for="item in commendList" :key="item.id">
+            <!-- 图片 -->
             <image class="img-item" :src="item.imgsrc" mode="widthFix" />
             <p class="text-item">abcdefghijklmnopqrstuvwxyzahdahjafkhdkahkjahfahfkhafasfjkhfhsakfjhasdkfhajkhakjhfjashf</p>
+            <!-- 头像 -->
             <image class="avatar-item" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+            <!-- 点赞 -->
             <view class="likes" @tap="">
                 <span>11</span>
                 <image v-if="true" class="icons" src="@/static/icons/heart.png" />
@@ -65,7 +68,8 @@ const commendList = ref([{
     border-radius: 4px;
     width: 44%;
     box-sizing: border-box;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
+    background-color: #ffb6c1;
 }
 .aitems:nth-child(2n-1) {
     float: left;
