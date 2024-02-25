@@ -45,6 +45,7 @@ const fabClick = () => {
         </view>
       </navigator>
     </scroll-view>
+    <!-- 悬浮按钮 -->
     <uni-fab ref="fab" :pattern="pattern" horizontal="right" vertical="bottom" @fabClick="fabClick" />
   </view>
 </template>

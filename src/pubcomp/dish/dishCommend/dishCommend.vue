@@ -4,18 +4,15 @@ import {ref} from 'vue'
 
 const rateValue = ref(3)
 
-const onChange = (e)=>{
-  console.log('rate发生改变:' + JSON.stringify(e))
-}
 </script>
 
 <template>
-  <view class="commend-items" v-for="item in 10" :key="1">
+  <navigator class="commend-items" v-for="(item, key) in 10" :key="1" :url="`/pages/subpages/comInfo/comInfo?commendId=${ key }`">
     <!-- 头像，昵称，评分 -->
     <view class="avatar-nickname">
       <image class="avatar-item" src="https://img.yzcdn.cn/vant/cat.jpeg" />
       <span class="nickname">{{ "昵称昵称" }}</span>
-      <uni-rate :value="rateValue" @change="onChange" :readonly="true"/>
+      <uni-rate :value="rateValue" :readonly="true"/>
     </view>
     <!-- 评论文字 -->
     <view class="contant"><text>评论文字评论文字评论文字评论文字评论文字评论文字评论文字评论文字评论文字评论文字评论文字评论文字</text></view>
@@ -32,11 +29,12 @@ const onChange = (e)=>{
       <image class="icons" src="@/static/icons/heart.png"/><span>6&emsp;</span>
       <span class="right-bottom">查看详情></span>
     </view>
-  </view>
+  </navigator>
 </template>
 
 <style scoped>
 .commend-items {
+  margin-left: 5px;
   position: relative;
   /* border-top: #f0f0f0 1px solid; */
   border-bottom: #f0f0f0 2px solid;

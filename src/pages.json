@@ -98,6 +98,12 @@
 					"style": {
 						"navigationBarTitleText": "美食信息"
 					}
+				},
+				{
+					"path": "comInfo/comInfo",
+					"style": {
+						"navigationBarTitleText": "评论详情"
+					}
 				}
 			]
 		}
