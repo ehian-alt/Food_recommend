@@ -5,11 +5,12 @@ import reclist from './components/reclist/reclist.vue';
 </script>
 
 <template>
+  <!-- 搜索区 -->
   <view class="container">
     <classify class="ele1"></classify>
     <search class="ele2"></search>
   </view>
-
+  <!-- 推荐列表 -->
   <reclist></reclist>
 </template>
 

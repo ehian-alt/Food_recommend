@@ -92,6 +92,12 @@
 					"style": {
 						"navigationBarTitleText": "我的收藏"
 					}
+				},
+				{
+					"path": "dishInfo/dishInfo",
+					"style": {
+						"navigationBarTitleText": "美食信息"
+					}
 				}
 			]
 		}
