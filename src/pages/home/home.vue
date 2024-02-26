@@ -13,9 +13,17 @@ onLoad(()=>{
 </script>
 
 <template>
-  <search></search>
+  <view class="search">
+    <search></search>
+  </view>
+  
   <homeGird />
 </template>
 
 <style>
+.search{
+  position: static;
+  top: 0;
+  z-index: 999;
+}
 </style>

@@ -28,7 +28,8 @@
 		{
 			"path": "pages/recommend/recommend",
 			"style": {
-				"navigationBarTitleText": "推荐"
+				"navigationBarTitleText": "推荐",
+				"onReachBottomDistance": 100
 			}
 		},
 		{
