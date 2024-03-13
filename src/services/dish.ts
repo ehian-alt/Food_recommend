@@ -10,4 +10,15 @@ export const recommendService = (recommendParams: recoPar)=>{
     })
 }
 
+export const userStarDish = (openId:string, dishId:string, stars:boolean)=>{
+    http({
+        method:'PUT',
+        url:'/user/recommend',
+        data: {
+            openId:openId,
+            dishId:dishId,
+            stars:stars
+        }
+    })
+}
 

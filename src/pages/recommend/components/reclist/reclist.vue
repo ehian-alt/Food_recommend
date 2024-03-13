@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { recommendService } from '@/services/dish'
+import { recommendService, userStarDish } from '@/services/dish'
 import type { recoPar, dishItem } from '@/types/dishInfoT';
 import { onMounted } from 'vue';
+import { useuserStore } from '@/stores/user';
+
+const userStore = useuserStore();
 
 const props = defineProps();
 let ms = {
@@ -17,17 +20,19 @@ const dishList = ref<dishItem[]>([])
 const recoParam = <recoPar>{
   page: 1,
   pageSize: 10,
+  openId: userStore.userInfo.openid
 }
+// 是否全部加载完
 let finshList = ref(false);
 const getRecoItems = async () => {
-  if (finshList.value){
+  if (finshList.value) {
     return
   }
   let result = await recommendService(recoParam)
   dishList.value.push(...result.data.items)
-  if (recoParam.page < result.data.pageCount){
+  if (recoParam.page < result.data.pageCount) {
     recoParam.page += 1
-  }else{
+  } else {
     finshList.value = true
   }
 }
@@ -45,6 +50,14 @@ uni.$on('saveTaste', (data) => {
   getRecoItems()
 })
 
+const starClick = async (dishId: string, key: number) => {
+  // 修改当前列表isStar的值
+  const stars = dishList.value[key].isStar ? false : true;
+  dishList.value[key].isStar = stars;
+  // 发送请求，添加/取消收藏
+  await userStarDish(userStore.userInfo.openid, dishId, stars);
+}
+
 onMounted(() => {
   getRecoItems()
 })
@@ -56,7 +69,7 @@ defineExpose({
 <template>
   <view>
     <!-- <div class="reclist">msg:{{ ms }}</div> -->
-    <navigator class="scroll-view-item" v-for="item in dishList" :key="item.dishId"
+    <navigator class="scroll-view-item" v-for="(item, key) in dishList" :key="item.dishId"
       :url="`/pages/subpages/dishInfo/dishInfo?dishId=${item.dishId}`">
       <!-- 菜品图片区域 -->
       <image class="recommend-img" :src="item.image" mode="aspectFill" />
@@ -71,14 +84,17 @@ defineExpose({
         <!-- 评分 -->
         <span class="pf">评分：{{ item.score }}</span>
         <!-- 收藏 -->
-        <span class="sc">收藏
-          <image v-if="true" class="icons" src="@/static/icons/star.png" />
-          <image v-else class="icons" src="@/static/icons/star-fill.png" />
-        </span>
+        <view @tap.stop.prevent>
+          <span class="sc" @click="starClick(item.dishId, key)" :param="item.dishId">收藏
+            <image v-if="item.isStar" class="icons" src="@/static/icons/star-fill.png" />
+            <image v-else class="icons" src="@/static/icons/star.png" />
+          </span>
+        </view>
+
       </view>
     </navigator>
-    
-    <view class="page-bottom">{{finshList ? "没有更多啦~" : "正在加载~"}}</view>
+
+    <view class="page-bottom">{{ finshList ? "没有更多啦~" : "正在加载~" }}</view>
   </view>
 </template>
 
@@ -141,10 +157,10 @@ defineExpose({
   transform: translateY(20%);
 }
 
-.page-bottom{
+.page-bottom {
   display: flex;
   justify-content: center;
-  color:#707070;
+  color: #707070;
   margin: 10px;
 }
 </style>

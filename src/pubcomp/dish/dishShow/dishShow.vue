@@ -1,5 +1,15 @@
 <script lang="ts" setup>
-const props = defineProps();
+import { onMounted, toRefs } from 'vue';
+interface dish {
+  dishId?:string
+}
+const props = defineProps<dish>();
+const { dishId } = toRefs(props);
+
+onMounted(() => {
+  console.log("子组件dishId: ", dishId?.value);
+  
+})
 </script>
 
 <template>

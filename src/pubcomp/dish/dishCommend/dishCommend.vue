@@ -1,6 +1,10 @@
 <script lang="ts" setup>
-const props = defineProps();
-import {ref} from 'vue'
+import { onMounted, toRefs, ref } from 'vue';
+interface dish {
+  dishId?:string
+}
+const props = defineProps<dish>();
+const { dishId } = toRefs(props);
 
 const rateValue = ref(3)
 

@@ -23,6 +23,8 @@ export type dishItem = {
     spicy: number
     /** 菜品咸淡 */
     salinity: number
+    /** 是否收藏 */
+    isStar: boolean
 }
 
 export type recoPar = {
@@ -35,5 +37,7 @@ export type recoPar = {
     /** 辣度 */
     spicy: number,
     /** 咸淡 */
-    salinity: number
+    salinity: number,
+    /** openId */
+    openId: string
 }

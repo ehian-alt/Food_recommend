@@ -6,30 +6,31 @@ import dishShow from '@/pubcomp/dish/dishShow/dishShow.vue'
 import dishCommend from '@/pubcomp/dish/dishCommend/dishCommend.vue'
 import dishDetail from '@/pubcomp/dish/dishDetail/dishDetail.vue'
 // 使用 open-type 和 onSuccess 事件传递参数
-const DishId = ref<queryDishId>({
-  dishId: ''
-});
+const dishId = ref()
 
 onLoad((query) => {
   // 通过 query 可以获取传递的参数
-  DishId.value = query
+  dishId.value = query?.dishId
+  
+  console.log("父页面dishId: ", dishId.value);
+  
   // 根据dishId发送get请求
 });
 </script>
 
 <template>
-  <dishShow></dishShow>
+  <dishShow :dishId="dishId"></dishShow>
   <!-- 详情 -->
   <view class="dish-commend">
     <view class="tit">菜品详情</view>
     
-    <dishDetail></dishDetail>
+    <dishDetail :dishId="dishId"></dishDetail>
   </view>
   <!-- 美食的图片 以及信息 -->
   <view class="dish-commend">
     <view class="tit">菜品评论</view>
     
-    <dishCommend></dishCommend>
+    <dishCommend :dishId="dishId"></dishCommend>
   </view>
 </template>
 
