@@ -1,42 +1,91 @@
 <script lang="ts" setup>
-import { onMounted, toRefs } from 'vue';
-interface dish {
-  dishId?:string
-}
-const props = defineProps<dish>();
-const { dishId } = toRefs(props);
+import { onMounted, toRefs, ref } from 'vue';
+import { dishInfoPage } from '@/services/dish';
+import type { dishItem } from "@/types/dishInfoT";
+import { userStarDish } from '@/services/dish'
+import { useuserStore } from '@/stores/user';
 
-onMounted(() => {
-  console.log("子组件dishId: ", dishId?.value);
-  
+const userStore = useuserStore();
+
+const numberList = ["一", "二", "三", "四", "五"]
+const spicyList = ["不辣", "微辣", "中辣", "爆辣"]
+const salinityList = ["清淡", "一般", "偏咸"]
+
+interface dish {
+  dishId: string,
+  isStar: string
+}
+// 接收来自父组件的参数
+const props = defineProps<dish>();
+const { dishId, isStar } = toRefs(props);
+
+const dishInfo = ref<dishItem>()
+const info = ref({
+  canteen: '',
+  spicy: '',
+  salinity: ''
+})
+const starClick = async () => {
+  // 修改当前列表isStar的值
+  dishInfo.value!.isStar = !dishInfo.value!.isStar;
+  // 发送请求，添加/取消收藏
+  await userStarDish(userStore.userInfo.openid, dishId.value, dishInfo.value!.isStar);
+}
+
+onMounted(async () => {
+
+  console.log("子组件dishId: ", dishId.value, isStar.value);
+  // 发送
+  let result = await dishInfoPage(dishId.value);
+  dishInfo.value = result.data;
+  dishInfo.value.isStar = isStar.value == 'true' ? true : false;
+  console.log(dishInfo.value);
+  info.value.canteen = numberList[dishInfo.value.canteen - 1]
+  info.value.spicy = spicyList[dishInfo.value.spicy - 1]
+  info.value.salinity = salinityList[dishInfo.value.salinity - 1]
 })
 </script>
 
 <template>
   <view>
     <!-- 美食图片 -->
-    <image class="dish-bigpic" src="https://img.yzcdn.cn/vant/cat.jpeg" mode="aspectFill" />
+    <image class="dish-bigpic" :src="dishInfo ? dishInfo?.image : 'https://img.yzcdn.cn/vant/cat.jpeg'"
+      mode="aspectFill" />
     <!-- 美食信息 -->
     <view class="dish-info">
       <!-- 美食名称 -->
-      <view class="bigname"><text class="dishName">这是个菜名这是个菜名这是个菜名这是个菜名</text></view>
+      <view class="bigname"><text class="dishName">{{ dishInfo?.dishName }}</text></view>
       <!-- 收藏 -->
-      <view class="star">
-        <image v-if="true" class="icons" src="@/static/icons/star.png" />
-        <image v-else class="icons" src="@/static/icons/star-fill.png" />
+      <view class="star" @click="starClick">
+        <image v-if="dishInfo?.isStar" class="icons" src="@/static/icons/star-fill.png" />
+        <image v-else class="icons" src="@/static/icons/star.png" />
         <br>
         收藏
       </view>
-      <view class="canteen">{{ "一食堂" }}</view>
+      <view class="canteen">{{ info.canteen }}食堂&ensp;{{ dishInfo?.shopId[0] }}楼{{ dishInfo?.shopId.substring(1, 3)
+        }}号窗口
+      </view>
       <!-- 价格 -->
-      <view class="price"><span class="dolle-fu">￥</span>{{ 8.88 }}</view>
+      <view class="price"><span class="dolle-fu">￥</span>{{ dishInfo?.price }}</view>
       <!-- 食堂导航 -->
       <view class="location">
-        <image class="icons ty-icon" src="@/static/icons/location-fill.png"/>
+        <image class="icons ty-icon" src="@/static/icons/location-fill.png" />
         <span>导航</span>
       </view>
     </view>
   </view>
+
+  <view class="dish-commend">
+    <view class="tit">菜品详情</view>
+
+    <view class="detail">
+      <view>辣度: &ensp;{{ info.spicy }}</view>
+      <view>咸淡: &ensp;{{ info.salinity }}</view>
+      <view>平均评分: &ensp;{{ dishInfo?.score }}</view>
+      <view>xx人已收藏</view>
+    </view>
+  </view>
+
 </template>
 
 <style scoped>
@@ -61,7 +110,7 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   left: 20px;
-  top: 10px;
+  top: 20px;
 }
 
 .dishName {
@@ -83,28 +132,49 @@ onMounted(() => {
   height: 1.5rem;
   width: 1.5rem;
 }
-.canteen{
+
+.canteen {
   color: #808080;
   position: absolute;
   left: 20px;
   top: 80px;
 }
-.price{
+
+.price {
   position: absolute;
   left: 20px;
   bottom: 10px;
   font-size: 23px;
-  color:#ee3f4d;
+  color: #ee3f4d;
 }
-.dolle-fu{
+
+.dolle-fu {
   font-size: 16px;
 }
-.location{
+
+.location {
   position: absolute;
   bottom: 20px;
   right: 25px;
 }
-.ty-icon{
+
+.ty-icon {
   transform: translateY(20%);
+}
+
+.dish-commend {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.tit {
+  color: #707070;
+  font-size: 14px;
+}
+
+.detail {
+  margin: 5px 0 0 8px;
+  line-height: 25px;
 }
 </style>

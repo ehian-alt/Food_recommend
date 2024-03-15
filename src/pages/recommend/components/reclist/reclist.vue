@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { recommendService, userStarDish } from '@/services/dish'
+import { recommendService, userStarDish } from '@/services/dish';
 import type { recoPar, dishItem } from '@/types/dishInfoT';
 import { onMounted } from 'vue';
 import { useuserStore } from '@/stores/user';
@@ -70,7 +70,7 @@ defineExpose({
   <view>
     <!-- <div class="reclist">msg:{{ ms }}</div> -->
     <navigator class="scroll-view-item" v-for="(item, key) in dishList" :key="item.dishId"
-      :url="`/pages/subpages/dishInfo/dishInfo?dishId=${item.dishId}`">
+      :url="`/pages/subpages/dishInfo/dishInfo?dishId=${item.dishId}&&isStar=${item.isStar}`">
       <!-- 菜品图片区域 -->
       <image class="recommend-img" :src="item.image" mode="aspectFill" />
       <!-- 文字区域 -->
@@ -78,14 +78,14 @@ defineExpose({
         <!-- 菜品名称 -->
         <text class="dish-name">{{ item.dishName }}</text>
         <!-- 食堂 价格 -->
-        <view class="dish-info">{{ numberList[item.canteen - 1] }}食堂&emsp;￥{{ item.price }}</view>
+        <view class="dish-info">{{ numberList[item.canteen - 1] }}食堂&emsp;评分: {{ item.score }}</view>
         <!-- 口味 -->
-        <view class="dish-info">咸淡:{{ salinityList[item.salinity - 1] }}&emsp;辣度:{{ spicyList[item.spicy] }}</view>
+        <view class="dish-info">咸淡:{{ salinityList[item.salinity - 1] }}&emsp;辣度:{{ spicyList[item.spicy - 1] }}</view>
         <!-- 评分 -->
-        <span class="pf">评分：{{ item.score }}</span>
+        <span class="price">￥{{ item.price }}</span>
         <!-- 收藏 -->
         <view @tap.stop.prevent>
-          <span class="sc" @click="starClick(item.dishId, key)" :param="item.dishId">收藏
+          <span class="sc" @click="starClick(item.dishId, key)" >收藏
             <image v-if="item.isStar" class="icons" src="@/static/icons/star-fill.png" />
             <image v-else class="icons" src="@/static/icons/star.png" />
           </span>
@@ -129,8 +129,9 @@ defineExpose({
 }
 
 
-.pf {
+.price {
   position: absolute;
+  color:#ee3f4d;
   left: 20px;
   bottom: 5px;
 }

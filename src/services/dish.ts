@@ -22,3 +22,10 @@ export const userStarDish = (openId:string, dishId:string, stars:boolean)=>{
     })
 }
 
+export const dishInfoPage = (dishId:string) => {
+    return http<dishItem>({
+        method:'GET',
+        url:'/user/recommend?dishId='+dishId,
+    })
+}
+
