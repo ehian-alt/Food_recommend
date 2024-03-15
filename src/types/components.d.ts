@@ -7,6 +7,6 @@ export type toastItem = {
     url: string,
     iconUrl: string
 }
-
+// 组件类型
 export type recoListInstance = InstanceType<typeof reclistVue>
 
