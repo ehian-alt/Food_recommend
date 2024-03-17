@@ -11,8 +11,6 @@ onLoad((query) => {
   dishId.value = query?.dishId
   isStar.value = query?.isStar
   console.log("父页面dishId: ", dishId.value, isStar.value);
-  
-  // 根据dishId发送get请求
 });
 </script>
 

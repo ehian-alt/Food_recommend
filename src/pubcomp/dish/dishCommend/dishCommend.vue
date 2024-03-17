@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { commentsByDish } from '@/services/comments';
+import { commentsByDish, transFormatDate } from '@/services/comments';
 import type { commentsItem } from '@/types/comments';
 import { onMounted, toRefs, ref } from 'vue';
 interface dish {
@@ -16,13 +16,7 @@ onMounted(async () => {
 
   commentList.value = result.data
   for (let i = 0; i < commentList.value.length; i++) {
-    let date = new Date(commentList.value[i].commentTime);
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let hours = date.getHours().toString().padStart(2, '0');
-    let minutes = date.getMinutes().toString().padStart(2, '0');
-    let formattedDate = `${month}/${day} ${hours}:${minutes}`;
-    commentList.value[i].commentTime = formattedDate;
+    commentList.value[i].commentTime = transFormatDate(commentList.value[i].commentTime);
   }
 
 })
@@ -32,7 +26,7 @@ onMounted(async () => {
 
 <template>
   <navigator class="commend-items" v-for="(item, id) in commentList" :key="item.id"
-    :url="`/pages/subpages/comInfo/comInfo?commendId=${id}`">
+    :url="`/pages/subpages/comInfo/comInfo?commentId=${item.id}`">
     <!-- 头像，昵称，评分 -->
     <view class="avatar-nickname">
       <image class="avatar-item" :src="item.avatarUrl" />

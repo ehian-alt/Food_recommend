@@ -26,3 +26,25 @@ export type commentsItem = {
     /** 评论图片列表 */
     images:[string,]
 }
+
+// 回复信息类型
+
+export type repliesItem = {
+    /** 回复id */
+    id:number,
+    /** 回复的评论的评论id */
+    commentId:number,
+    /** 回复者id */
+    openid:string,
+    /** 回复时间 */
+    replyTime:string,
+    /** 文字内容 */
+    content:string,
+    /** 点赞数 */
+    agree:number,
+    /** 回复者头像 */
+    avatarUrl:string,
+    /** 回复者昵称 */
+    nickName:string,
+
+}
