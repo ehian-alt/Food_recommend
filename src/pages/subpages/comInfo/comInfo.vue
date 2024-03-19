@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app';
-import { commentByCommentId, forumByForumId, repliesByCommentId, repliesByForumId, transFormatDate } from '@/services/comments';
-import type { commentsItem, repliesItem } from '@/types/comments';
+import { commentByCommentId, forumByForumId, repliesByCommentId, repliesByForumId, replyCommentService, replyForumService, transFormatDate } from '@/services/comments';
+import type { commentsItem, repliesItem, replyParam } from '@/types/comments';
+import { useuserStore } from '@/stores/user';
 
+const userStore = useuserStore();
 const commentId = ref();
 const forumId = ref();
 const comment = ref<commentsItem>();
@@ -34,32 +36,57 @@ const getForumData = async () => {
   let repResult = await repliesByForumId(forumId.value);
   replies.value = repResult.data;
 }
+const replyInput = ref<string>()
+
+const replyParam = ref<replyParam>({
+  replyId: isForum.value ? forumId.value : commentId.value,
+  openid: userStore.userInfo.openid,
+  content: ''
+})
+
+const replyForum = async () => {
+  await replyForumService(replyParam.value)
+}
+
+const replyComment = async () => {
+  await replyCommentService(replyParam.value)
+}
 
 onMounted(() => {
   // 根据commentId获取评论和评论的回复
   if (commentId.value) {
     getRecommendData();
-    console.log("comment:", commentId.value);
-    console.log("forum:", forumId.value);
   }
   if (forumId.value) {
     getForumData();
-    console.log("comment:", commentId.value);
-    console.log("forum:", forumId.value);
   }
 })
-const replyInput = ref<string>()
-const replyButton = ()=>{
-  if (replyInput.value!==undefined){
-    console.log("回复内容:",replyInput.value);
-    // 发送请求
 
-    
-  }
-  else{
+const replyButton = () => {
+  if (replyInput.value !== undefined) {
+    // 发送请求
+    replyParam.value.content = replyInput.value;
+    if (isForum.value) {
+      replyParam.value.replyId = forumId.value;
+      replyForum();
+      getForumData();
+    } else {
+      replyParam.value.replyId = commentId.value;
+      console.log("发送commentId_replies", replyParam.value);
+      replyComment();
+      getRecommendData();
+    }
+
     uni.showToast({
-      title:"内容不能为空!",
-      icon:"error"
+      title: "回复成功!",
+      icon: "success"
+    })
+    replyInput.value = undefined
+  }
+  else {
+    uni.showToast({
+      title: "内容不能为空!",
+      icon: "error"
     })
   }
 }
@@ -69,38 +96,39 @@ const replyButton = ()=>{
 
 <template>
   <!-- 楼主 -->
-  <view class="avatar-nickname">
-    <image class="avatar-item" :src="comment?.avatarUrl" />
-    <span class="nickname">{{ comment?.nickName }}</span>
-    <uni-rate v-if="commentId !== undefined" :value="comment?.score" :readonly="true" />
-  </view>
-  <view class="contant"><text>{{ comment?.content }}</text></view>
-  <!-- 图片 -->
-  <swiper v-if="comment!.images !== undefined && comment!.images.length > 0" indicator-dots autoplay circular
-    indicator-active-color="#efefef" :interval="3000" :duration="1000">
-    <swiper-item class="swiper-item" v-for="imageUrl in comment?.images" :key="imageUrl">
-      <view class="swiper-img">
-        <image :src="imageUrl" mode="aspectFill"></image>
-      </view>
-    </swiper-item>
-  </swiper>
-
-  <view class="items-bottom">
-    <span>----{{ "&ensp;" + comment?.createTime + "&ensp;" }}----&emsp;</span>
-    <!-- 点赞 -->
-    <image class="icons" src="@/static/icons/heart.png" /><span>{{ comment?.agree }}&emsp;</span>
-  </view>
-
-  <!-- 用户的回复 -->
-  <view class="tit">评论/提问回复</view>
-  <view class="reply-items" v-for="(item, key) in replies" :key="item.id">
+  <view style="background-color: #fff;">
     <view class="avatar-nickname">
-      <!-- 回复者头像 -->
-      <image class="avatar-item" :src="item.avatarUrl" />
-      <span class="nickname">{{ item.nickName }}</span>
-      <span class="nickname">{{ transFormatDate(item.replyTime) }}</span>
+      <image class="avatar-item" :src="comment?.avatarUrl" />
+      <span class="nickname">{{ comment?.nickName }}</span>
+      <uni-rate v-if="commentId !== undefined" :value="comment?.score" :readonly="true" />
     </view>
-    <view class="contant"><text>{{ item.content }}</text></view>
+    <view class="contant"><text>{{ comment?.content }}</text></view>
+    <!-- 图片 -->
+    <swiper v-if="comment!.images !== undefined && comment!.images.length > 0" indicator-dots autoplay circular
+      indicator-active-color="#efefef" :interval="3000" :duration="1000">
+      <swiper-item class="swiper-item" v-for="imageUrl in comment?.images" :key="imageUrl">
+        <view class="swiper-img">
+          <image :src="imageUrl" mode="aspectFill"></image>
+        </view>
+      </swiper-item>
+    </swiper>
+
+    <view class="items-bottom">
+      <span>----{{ "&ensp;" + comment?.createTime + "&ensp;" }}----&emsp;</span>
+      <!-- 点赞 -->
+      <image class="icons" src="@/static/icons/heart.png" /><span>{{ comment?.agree }}&emsp;</span>
+    </view>
+    <!-- 用户的回复 -->
+    <view class="tit">评论/提问回复</view>
+    <view class="reply-items" v-for="(item, key) in replies" :key="item.id">
+      <view class="avatar-nickname">
+        <!-- 回复者头像 -->
+        <image class="avatar-item" :src="item.avatarUrl" />
+        <span class="nickname">{{ item.nickName }}</span>
+        <span class="nickname">{{ transFormatDate(item.replyTime) }}</span>
+      </view>
+      <view class="contant"><text>{{ item.content }}</text></view>
+    </view>
   </view>
 
   <!-- 回复按钮 -->
@@ -109,14 +137,16 @@ const replyButton = ()=>{
       <uni-col :span="1">
         <view class="fill-block"></view>
       </uni-col>
-        
+
       <uni-col :span="16">
         <view class="demo-uni-col dark">
           <input class="uni-input inp" placeholder="有什么想说的..." v-model="replyInput" />
         </view>
       </uni-col>
 
-      <uni-col :span="1"><view class="fill-block"></view></uni-col>
+      <uni-col :span="1">
+        <view class="fill-block"></view>
+      </uni-col>
 
       <uni-col :span="5">
         <button class="demo-uni-col light" @click="replyButton">
@@ -124,21 +154,25 @@ const replyButton = ()=>{
         </button>
       </uni-col>
 
-      <uni-col :span="1"><view class="fill-block"></view></uni-col>
+      <uni-col :span="1">
+        <view class="fill-block"></view>
+      </uni-col>
     </uni-row>
   </view>
 </template>
 
 <style scoped>
-.fill-block{
+.fill-block {
   height: 36px;
   background-color: #efefef;
 }
-.inp{
+
+.inp {
   height: 36px;
   border-radius: 5px;
   box-shadow: 0 -1px 10px rgb(134, 131, 131);
 }
+
 .demo-uni-row {
   display: block;
 }
@@ -207,8 +241,10 @@ const replyButton = ()=>{
 }
 
 .reply-items {
-  margin-top: 5px;
-  margin-left: 20px;
+  border-bottom: 2px solid #efefef;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 20px;
 }
 
 .items-bottom {
@@ -232,7 +268,7 @@ const replyButton = ()=>{
   /* 底部栏的高度 */
   /* background-color: #333; */
   color: #808080;
-  
+
   /* 添加阴影以美化 */
 }
 </style>

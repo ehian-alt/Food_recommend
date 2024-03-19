@@ -67,3 +67,13 @@ export type forumItem = {
     repliesNum:number,
 }
 
+// 发送回复请求类型
+export type replyParam = {
+    /** 回复的哪一条 */
+    replyId:string,
+    /** 谁回复的 */
+    openid:string,
+    /** 回复的什么 */
+    content:string
+}
+

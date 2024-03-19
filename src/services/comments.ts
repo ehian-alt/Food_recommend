@@ -1,4 +1,4 @@
-import type { commentsItem, forumItem, repliesItem } from "@/types/comments";
+import type { commentsItem, forumItem, repliesItem, replyParam } from "@/types/comments";
 import type { pageRequest, pageResult } from "@/types/global";
 import { http } from "@/utils/http";
 /**
@@ -97,4 +97,25 @@ export const repliesByForumId = (forumId:number)=>{
         url:'/user/forum/replies?forumId='+forumId,
     })
 }
-
+/**
+ * 回复论坛，添加回复记录
+ * @param replyParam 
+ */
+export const replyForumService = (replyParam:replyParam)=>{
+    http({
+        method:'POST',
+        url:'/user/forum/reply',
+        data:replyParam,
+    })
+}
+/**
+ * 回复评论或推荐，添加记录
+ * @param replyParam 
+ */
+export const replyCommentService = (replyParam:replyParam) =>{
+    http({
+        method:'POST',
+        url:'/user/comment/reply',
+        data:replyParam,
+    })
+}
