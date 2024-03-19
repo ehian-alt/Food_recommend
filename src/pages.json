@@ -53,7 +53,7 @@
 			},
 			{
 				"pagePath": "pages/recommend/recommend",
-				"text": "推荐",
+				"text": "榜单",
 				"iconPath": "static/icons/like.png",
 				"selectedIconPath": "static/icons/like-fill.png"
 			},

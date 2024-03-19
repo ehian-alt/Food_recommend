@@ -1,3 +1,4 @@
+// 分页请求返回数据类型
 export type pageResult<T> = {
     /** 列表数据 */
     items: T[]
@@ -10,3 +11,15 @@ export type pageResult<T> = {
     /** 总共页数 */
     pageCount: number
 }
+// 分页请求类型
+export type pageRequest = {
+    /** 第几页 */
+    page: number,
+    /** 每页几条，default: 10 */
+    pageSize:number,
+    /** 用户id */
+    openid:string,
+    /** 补充 */
+    supply:number
+}
+

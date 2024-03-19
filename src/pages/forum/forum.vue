@@ -1,6 +1,17 @@
 <script lang="ts" setup>
 import forumSwiper from './components/forumSwiper.vue'
-import dishCommend from '@/pubcomp/dish/dishCommend/dishCommend.vue'
+import forumList from '@/pages/forum/forumList/forumList.vue'
+import type { dishCommendInstance } from '@/types/components';
+import { ref, onMounted } from 'vue';
+import { onReachBottom } from '@dcloudio/uni-app';
+
+const forumRef = ref<dishCommendInstance>();
+
+onReachBottom(()=>{
+  console.log("onReachBottom");
+  forumRef.value.forumList();
+})
+
 </script>
 
 <template>
@@ -10,7 +21,7 @@ import dishCommend from '@/pubcomp/dish/dishCommend/dishCommend.vue'
   </view>
   <!-- 论坛评论 -->
   <view class="form-commend">
-    <dishCommend></dishCommend>
+    <forumList ref="forumRef"></forumList>
   </view>
 </template>
 

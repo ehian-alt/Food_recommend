@@ -1,30 +1,13 @@
 <script lang="ts" setup>
-import { commentsByDish, forumListService, transFormatDate } from '@/services/comments';
-import type { commentsItem } from '@/types/comments';
+import { commentItemListService, commentsByDish, forumListService, transFormatDate } from '@/services/comments';
 import type { pageRequest } from '@/types/global';
-import { onMounted, toRefs, ref } from 'vue';
+import type { forumItem } from '@/types/comments'
+import { onMounted, ref } from 'vue';
 import { useuserStore } from '@/stores/user';
 
 const userStore = useuserStore();
 
-interface dish {
-  dishId: string
-}
-const props = defineProps<dish>();
-const { dishId } = toRefs(props);
-
-const commentList = ref<commentsItem[]>([])
-
-onMounted(async () => {
-  // 查询菜品为dishId的评论
-  let result = await commentsByDish(dishId.value);
-
-  commentList.value = result.data
-  for (let i = 0; i < commentList.value.length; i++) {
-    commentList.value[i].createTime = transFormatDate(commentList.value[i].createTime);
-  }
-
-})
+const commentList = ref<forumItem[]>([])
 
 const pageReq = <pageRequest>{
   page: 1,
@@ -32,31 +15,46 @@ const pageReq = <pageRequest>{
   openid:userStore.userInfo.openid,
   supply:0
 }
+// 论坛请求
+// 是否全部加载完
+let finshList = ref(false);
+const getForumItemList = async () => {
+  if (finshList.value) {
+    return
+  }
+  let result = await forumListService(pageReq)
+  commentList.value.push(...result.data.items)
+
+  if (pageReq.page < result.data.pageCount) {
+    pageReq.page += 1
+  } else {
+    finshList.value = true
+  }
+}
+defineExpose({
+  forumList: getForumItemList
+})
+onMounted(()=>{
+  getForumItemList();
+})
 
 </script>
 
 <template>
-  <navigator class="commend-items" v-for="(item, id) in commentList" :key="item.id"
-    :url="`/pages/subpages/comInfo/comInfo?commentId=${item.id}`">
-    <!-- 头像，昵称，评分 -->
+  <navigator class="commend-items" v-for="item in commentList" :key="item.id"
+    :url="`/pages/subpages/comInfo/comInfo?forumId=${item.id}`">
+    <!-- 头像，昵称 -->
     <view class="avatar-nickname">
       <image class="avatar-item" :src="item.avatarUrl" />
       <span class="nickname">{{ item.nickName }}</span>
-      <uni-rate :value="item.score" :readonly="true" />
     </view>
     <!-- 评论文字 -->
     <view class="contant"><text>{{ item.content }}</text></view>
-    <!-- 图片（可选） 要用v-for写 -->
-    <view class="com-pics">
-      <image class="compic-item" mode="aspectFill" v-for="(image, key) in item.images" :key="key" :src="image"></image>
-    </view>
-    <!-- 其他信息，时间，回复数量，点赞信息 -->
+    <!-- 其他信息，时间，回复数量 -->
     <view class="items-bottom">
-      <span>----{{ "&ensp;" + item.createTime + "&ensp;" }}----&emsp;</span>
+      <span>----{{ "&ensp;" + transFormatDate(item.createTime) + "&ensp;" }}----&emsp;</span>
       <!-- 回复图标 -->
       <image class="icons" src="@/static/icons/message.png" /><span>{{ item.repliesNum }}&emsp;</span>
-      <!-- 点赞 -->
-      <image class="icons" src="@/static/icons/heart.png" /><span>{{ item.agree }}&emsp;</span>
       <span class="right-bottom">查看详情></span>
     </view>
   </navigator>

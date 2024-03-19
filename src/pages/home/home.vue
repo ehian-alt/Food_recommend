@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import homeGird from '@/pages/home/components/homeGird.vue'
-import { http } from '@/utils/http';
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onReachBottom } from '@dcloudio/uni-app';
 import search from '@/pubcomp/search/search.vue'
+import type { girdInstance } from '@/types/components';
+import { ref } from 'vue';
 
-onLoad(()=>{
-  http({
-    method:'GET',
-    url:'/test'
-  })
+const girdRef = ref<girdInstance>();
+
+onReachBottom(()=>{
+  console.log("onReachBottom");
+  girdRef.value?.getRecoItems()
 })
 </script>
 
@@ -17,7 +18,7 @@ onLoad(()=>{
     <search></search>
   </view>
   
-  <homeGird />
+  <homeGird ref="girdRef"/>
 </template>
 
 <style>

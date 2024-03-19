@@ -1,55 +1,64 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-const commendList = ref([{
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/cat.jpeg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/apple-1.jpg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/apple-3.jpg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/apple-2.jpg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/cat.jpeg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/cat.jpeg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/apple-4.jpg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/apple-1.jpg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/cat.jpeg'
-}, {
-    id: Number,
-    imgsrc: 'https://img.yzcdn.cn/vant/apple-2.jpg'
-}])
+import type { commentsItem } from '@/types/comments';
+import { ref, onMounted } from 'vue'
+import { commentItemListService } from '@/services/comments'
+import type { pageRequest } from '@/types/global';
+import { useuserStore } from '@/stores/user';
+const userStore = useuserStore();
 
+const pageReq = <pageRequest>({
+    page: 1,
+    pageSize: 10,
+    openid: userStore.userInfo.openid,
+    supply: 1
+})
+
+const commentItems = ref<commentsItem[]>([])
+
+let finshList = ref(false); // 是否全部加载完
+const getCommendItems = async (pageReq: pageRequest) => {
+    if (finshList.value) {
+        return
+    }
+    let result = await commentItemListService(pageReq);
+    commentItems.value.push(...result.data.items);
+    // 页数判断是否加载完成
+    if (pageReq.page < result.data.pageCount) {
+        pageReq.page += 1
+    } else {
+        finshList.value = true
+    }
+}
+
+onMounted(() => {
+    // 发送含推荐的请求
+    getCommendItems(pageReq);
+})
+
+defineExpose({
+    getItems: getCommendItems
+})
 </script>
 
 <template>
     <!-- 首页宫格 -->
     <view class="gird-container">
-        <view class="aitems" v-for="item in commendList" :key="item.id">
+        <navigator class="aitems" v-for="item in commentItems" :key="item.id"
+            :url="`/pages/subpages/comInfo/comInfo?commentId=${item.id}`">
             <!-- 图片 -->
-            <image class="img-item" :src="item.imgsrc" mode="widthFix" />
-            <p class="text-item">abcdefghijklmnopqrstuvwxyzahdahjafkhdkahkjahfahfkhafasfjkhfhsakfjhasdkfhajkhakjhfjashf</p>
+            <image class="img-item" :src="item.images[0]" mode="widthFix" />
+            <p class="text-item">{{ item.content }}</p>
             <!-- 头像 -->
-            <image class="avatar-item" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+            <image class="avatar-item" :src="item.avatarUrl" />
+            <!-- 昵称 -->
+            <span class="nick-name">{{ item.nickName }}</span>
             <!-- 点赞 -->
             <view class="likes" @tap="">
-                <span>11</span>
+                <span>{{ item.agree }}</span>
                 <image v-if="true" class="icons" src="@/static/icons/heart.png" />
                 <image v-else class="icons" src="@/static/icons/heart-fill.png" />
             </view>
-        </view>
+        </navigator>
     </view>
 </template>
 
@@ -61,24 +70,17 @@ const commendList = ref([{
     /* justify-content: space-between; */
     align-items: flex-start;
 }
-.aitems{
-    flex: 1;
+
+.aitems {
     padding: 10px 2% 5px 2%;
     margin: 0 1% 5px 1%;
     border-radius: 4px;
-    width: 44%;
+    width: 47%;
     box-sizing: border-box;
-    /* background-color: #ffffff; */
-    background-color: #ffb6c1;
+    background-color: #ffffff;
+    /* background-color: #ffb6c1; */
 }
-.aitems:nth-child(2n-1) {
-    float: left;
-    float: top;
-}
-.aitems:nth-child(2n){
-    float: top;
-    float: left;
-}
+
 .img-item {
     border-radius: 4px;
     overflow: hidden;
@@ -103,11 +105,18 @@ const commendList = ref([{
     border-radius: 50%;
 }
 
+.nick-name {
+    float: left;
+    /* color:#343434; */
+    margin-left: 5px;
+}
+
 .likes {
     display: flex;
     align-items: center;
     float: right;
     vertical-align: middle;
+    color: #808080;
 }
 
 .icons {

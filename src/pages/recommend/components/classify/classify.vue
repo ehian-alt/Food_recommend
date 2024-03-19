@@ -92,7 +92,7 @@ export default {
 <template>
   <view class="example-body">
     <uni-icons type="tune" size="30" color="#efefef" @click="showDrawer('showLeft')"></uni-icons>
-    <uni-drawer ref="showLeft" mode="left" :width="320" @change="change($event, 'showLeft')">
+    <uni-drawer ref="showLeft" mode="left" :width="320" >
       <view style="padding-left: 10px;">
         <uni-section title="食堂" type="line">
           <uni-data-checkbox v-model="filterData.canteen" :localdata="canteens" />

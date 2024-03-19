@@ -1,4 +1,5 @@
-import type { commentsItem, repliesItem } from "@/types/comments";
+import type { commentsItem, forumItem, repliesItem } from "@/types/comments";
+import type { pageRequest, pageResult } from "@/types/global";
 import { http } from "@/utils/http";
 /**
  * 根据菜品id获取该菜品所有评论
@@ -48,5 +49,52 @@ export const transFormatDate = (dateTime:string)=>{
     let minutes = date.getMinutes().toString().padStart(2, '0');
     let formattedDate = `${month}/${day} ${hours}:${minutes}`;
     return formattedDate;
+}
+/**
+ * 根据页面分页请求推荐
+ * @param pageReq 
+ * @returns 
+ */
+export const commentItemListService = (pageReq:pageRequest)=>{
+    return http<pageResult<commentsItem>>({
+        method:'GET',
+        url:'/user/home',
+        data:pageReq
+    })
+}
+
+/**
+ * 根据页面分页请求论坛
+ * @param pageReq 
+ * @returns 
+ */
+export const forumListService = (pageReq:pageRequest)=>{
+    return http<pageResult<forumItem>>({
+        method:'GET',
+        url:'/user/forum',
+        data:pageReq
+    })
+}
+/**
+ * 根据forumid请求讨论
+ * @param forumId 
+ * @returns 
+ */
+export const forumByForumId = (forumId:number) =>{
+    return http<commentsItem>({
+        method:'GET',
+        url:'/user/forum/forum?forumId='+forumId,
+    })
+}
+/**
+ * 根据forumID获取该问题下的回复
+ * @param forumId 
+ * @returns 
+ */
+export const repliesByForumId = (forumId:number)=>{
+    return http<repliesItem[]>({
+        method:'GET',
+        url:'/user/forum/replies?forumId='+forumId,
+    })
 }
 
