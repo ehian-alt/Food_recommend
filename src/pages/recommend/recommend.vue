@@ -11,10 +11,7 @@ const fabClick = () => {
     duration: 300 // 滚动动画的持续时间，单位ms
   });
 }
-const pattern = ref({
-  buttonColor: '#ffb6c1',
-  icon: "arrow-up",
-})
+
 const recoRef = ref<recoListInstance>()
 const scrollTop = ref(0)
 
@@ -36,10 +33,24 @@ onReachBottom(()=>{
   </scroll-view>
 
   <!-- 悬浮按钮 -->
-  <uni-fab ref="fab" :pattern="pattern" horizontal="right" vertical="bottom" @fabClick="fabClick" />
+  <view class="float-button" @click="fabClick"><uni-icons type="arrow-up" size="30" color="white"></uni-icons></view>
 </template>
 
 <style scoped>
+.float-button {
+  position: fixed; /* 固定位置 */
+  bottom: 30px; /* 距离底部50px */
+  right: 15px; /* 距离右侧30px */
+  width: 55px; /* 宽度 */
+  height: 55px; /* 高度 */
+  background-color: #ffb6c1; /* 背景颜色 */
+  color: white; /* 字体颜色 */
+  text-align: center; /* 文字居中 */
+  line-height: 50px; /* 行高与容器高度相同 */
+  border-radius: 50%; /* 圆角 */
+  z-index: 999; /* 确保按钮在最上层 */
+  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.3);
+}
 .container {
   position: static;
   top: 0;

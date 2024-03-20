@@ -149,7 +149,7 @@ const replyButton = () => {
       </uni-col>
 
       <uni-col :span="5">
-        <button class="demo-uni-col light" @click="replyButton">
+        <button class="demo-uni-col light rep-btn" @click="replyButton">
           回复
         </button>
       </uni-col>
@@ -170,7 +170,7 @@ const replyButton = () => {
 .inp {
   height: 36px;
   border-radius: 5px;
-  box-shadow: 0 -1px 10px rgb(134, 131, 131);
+  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.3);
 }
 
 .demo-uni-row {
@@ -185,13 +185,15 @@ const replyButton = () => {
 .dark {
   background-color: #f5f5f5;
 }
-
+.rep-btn{
+  color: #ffffff;
+  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.3);
+}
 .light {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #ffb6c1;
-  box-shadow: 0 -1px 10px rgb(134, 131, 131);
 }
 
 .avatar-nickname {
@@ -266,9 +268,6 @@ const replyButton = () => {
   width: 100%;
   height: 36px;
   /* 底部栏的高度 */
-  /* background-color: #333; */
   color: #808080;
-
-  /* 添加阴影以美化 */
 }
 </style>

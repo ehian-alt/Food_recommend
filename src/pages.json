@@ -105,6 +105,12 @@
 					"style": {
 						"navigationBarTitleText": "评论详情"
 					}
+				},
+				{
+					"path": "createComment/createComment",
+					"style": {
+						"navigationBarTitleText": "讨论"
+					}
 				}
 			]
 		}

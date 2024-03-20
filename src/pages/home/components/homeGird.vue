@@ -4,7 +4,16 @@ import { ref, onMounted } from 'vue'
 import { commentItemListService } from '@/services/comments'
 import type { pageRequest } from '@/types/global';
 import { useuserStore } from '@/stores/user';
+import { onLoad } from '@dcloudio/uni-app';
+import { http } from '@/utils/http';
 const userStore = useuserStore();
+
+onLoad(()=>{
+    http({
+        method:'GET',
+        url:'/user/isLogin',
+    })
+})
 
 const pageReq = <pageRequest>({
     page: 1,
