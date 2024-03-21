@@ -1,7 +1,10 @@
 <script lang="ts" setup>
+import type { newCommentParam } from '@/types/comments';
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
-
+import { useuserStore } from '@/stores/user';
+import { newCommentService, newForumService } from '@/services/comments';
+const userStore = useuserStore();
 interface param {
   dishId: string,
   // 是否comment
@@ -14,38 +17,85 @@ const state = ref([
 
 const pageParam = ref<param>()
 const content = ref<string>()
-const imageValue = ref<string[]>([])
-const comData = ref({
+let imageValue: string[] = [];
+
+const comData = ref<newCommentParam>({
   content: '',
-  imageValue: [''],
+  imagePath: [],
   rate: 3,
-  state: 1
+  state: 1,
+  dishId: pageParam.value?.dishId as string,
+  openid: userStore.userInfo.openid
 })
-const success = (e: any) => {
-  console.log("上传成功success", e);
-}
-const progress = (e: any) => {
-  console.log("progress", e);
 
-}
-const fail = (e: any) => {
-  console.log("fail", e);
-
-}
 const select = (e: any) => {
-  console.log("select", e);
-
+  let t = e.tempFilePaths[0]
+  imageValue.push(t)
 }
-const comfireComment = () => {
+const deleteImg = (e: any) => {
+  let t = e.tempFilePath
+  console.log("delete", e.tempFilePath);
+  for (let i = 0; i < imageValue.length; i++) {
+    if (t == imageValue[i]) {
+      imageValue.splice(i, 1);
+    }
+  }
+}
+
+const getImagePaths = async () => {
+  for (let i = 0; i < imageValue.length; i++) {
+    uni.uploadFile({
+      url: '/file/upload',
+      fileType: 'image',
+      filePath: imageValue[i],
+      name: 'image',
+      success: ({ data, statusCode }) => {
+        if (statusCode === 200) {
+          const imgurl = JSON.parse(data).data;
+          comData.value.imagePath.push(imgurl);
+        }
+      },
+    })
+  }
+}
+
+const newComment = async (commentParam: newCommentParam) => {
+  await newCommentService(commentParam);
+}
+const newForum = async (commentParam: newCommentParam) => {
+  await newForumService(commentParam);
+}
+
+const comfireComment = async () => {
   comData.value.content = content.value as string;
-  comData.value.imageValue = imageValue.value as string[];
   console.log(comData.value);
-  console.log(imageValue.value);
+  if (pageParam.value?.mode === "1") {
+    // 给菜品评价
+    // 上传云端
+    getImagePaths()
+    uni.showLoading({
+      title: '正在发送请求',
+      mask: true
+    })
+    setTimeout(() => {
+      newComment(comData.value);
+      uni.navigateBack({
+        delta: 1,//返回层数，2则上上页
+      })
+    }, 3000);
+
+  } else {
+    // 论坛发表，发送请求
+    newForum(comData.value);
+  }
+
+
 }
 
 onLoad((query) => {
   // 通过 query 可以获取传递的参数
   pageParam.value = query as param
+  comData.value.dishId = query?.dishId;
 });
 </script>
 
@@ -54,10 +104,9 @@ onLoad((query) => {
     <textarea class="input-cont" v-model="content" placeholder="说点什么......" />
   </view>
 
-  <view v-if="pageParam?.mode==='1'">
+  <view v-if="pageParam?.mode === '1'">
     <view class="view-com">
-      <uni-file-picker limit="3" v-model="imageValue" @progress="progress" @fail="fail" @select="select"
-        @success="success" title="最多上传3张图片"></uni-file-picker>
+      <uni-file-picker limit="3" @select="select" @delete="deleteImg" title="最多上传3张图片"></uni-file-picker>
     </view>
 
     <view class="view-com pdlr">

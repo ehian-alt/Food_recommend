@@ -9,7 +9,7 @@ const girdRef = ref<girdInstance>();
 
 onReachBottom(()=>{
   console.log("onReachBottom");
-  girdRef.value?.getRecoItems()
+  girdRef.value?.getCommendItems()
 })
 </script>
 

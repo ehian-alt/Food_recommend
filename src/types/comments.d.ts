@@ -25,6 +25,10 @@ export type commentsItem = {
     repliesNum:number,
     /** 评论图片列表 */
     images:string[]
+    /** 评论的美食的图片 */
+    image:string,
+    /** 评论的美食的名称 */
+    dishName:string
 }
 
 // 回复信息类型
@@ -75,5 +79,21 @@ export type replyParam = {
     openid:string,
     /** 回复的什么 */
     content:string
+}
+
+// 评论类型
+export type newCommentParam = {
+    /** 文字内容 */
+    content: string,
+    /** 图片云地址 */
+    imagePath: string[],
+    /** 评分 */
+    rate: number,
+    /** 是否首页推荐 */
+    state: number,
+    /**哪一个菜品的评价 */
+    dishId:string,
+    /** 谁发布的 */
+    openid:string
 }
 

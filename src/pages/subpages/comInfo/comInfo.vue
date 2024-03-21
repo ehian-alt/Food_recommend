@@ -11,6 +11,7 @@ const forumId = ref();
 const comment = ref<commentsItem>();
 const replies = ref<repliesItem[]>([]);
 const isForum = ref(false)
+
 onLoad((query) => {
   console.log(query);
   commentId.value = query?.commentId;
@@ -20,7 +21,7 @@ onLoad((query) => {
   }
   console.log("isForum", isForum.value);
 })
-
+// 根据commentId请求评论信息
 const getRecommendData = async () => {
   let comResult = await commentByCommentId(commentId.value);
   comment.value = comResult!.data;
@@ -28,7 +29,7 @@ const getRecommendData = async () => {
   let repResult = await repliesByCommentId(commentId.value);
   replies.value = repResult.data;
 }
-
+// 根据forumId请求论坛讨论信息
 const getForumData = async () => {
   let forumResult = await forumByForumId(forumId.value);
   comment.value = forumResult.data;
@@ -36,18 +37,19 @@ const getForumData = async () => {
   let repResult = await repliesByForumId(forumId.value);
   replies.value = repResult.data;
 }
+// 回复输入框
 const replyInput = ref<string>()
-
+// 回复请求参数
 const replyParam = ref<replyParam>({
   replyId: isForum.value ? forumId.value : commentId.value,
   openid: userStore.userInfo.openid,
   content: ''
 })
-
+// 发起回复论坛的请求
 const replyForum = async () => {
   await replyForumService(replyParam.value)
 }
-
+// 发起回复菜品评论的请求
 const replyComment = async () => {
   await replyCommentService(replyParam.value)
 }
@@ -57,20 +59,24 @@ onMounted(() => {
   if (commentId.value) {
     getRecommendData();
   }
+  // 如果是forumId则获取论坛问题及其的信息
   if (forumId.value) {
     getForumData();
   }
 })
-
+// 回复按钮函数
 const replyButton = () => {
   if (replyInput.value !== undefined) {
     // 发送请求
     replyParam.value.content = replyInput.value;
+    // 判断类型
     if (isForum.value) {
+      // 是论坛则发送论坛相关请求
       replyParam.value.replyId = forumId.value;
       replyForum();
       getForumData();
     } else {
+      // 是评论则发送菜品评论相关请求
       replyParam.value.replyId = commentId.value;
       console.log("发送commentId_replies", replyParam.value);
       replyComment();
@@ -90,7 +96,6 @@ const replyButton = () => {
     })
   }
 }
-
 
 </script>
 
@@ -114,10 +119,15 @@ const replyButton = () => {
     </swiper>
 
     <view class="items-bottom">
-      <span>----{{ "&ensp;" + comment?.createTime + "&ensp;" }}----&emsp;</span>
-      <!-- 点赞 -->
-      <image class="icons" src="@/static/icons/heart.png" /><span>{{ comment?.agree }}&emsp;</span>
+      <span >----{{ "&ensp;" + comment?.createTime + "&ensp;" }}----&emsp;&emsp;&emsp;</span>
+      <!-- 浏览量 -->
+      <!-- <image class="icons mar-rig" src="@/static/icons/eye.png" /><span>{{ comment?.agree }}&emsp;</span> -->
     </view>
+
+    <view>
+      <image :src="comment?.image" class="dish-img" mode="aspectFill"/><span>{{ comment?.dishName }}</span>
+    </view>
+
     <!-- 用户的回复 -->
     <view class="tit">评论/提问回复</view>
     <view class="reply-items" v-for="(item, key) in replies" :key="item.id">
@@ -195,7 +205,12 @@ const replyButton = () => {
   justify-content: center;
   background-color: #ffb6c1;
 }
-
+.dish-img{
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  
+}
 .avatar-nickname {
   margin-left: 10px;
   position: relative;
@@ -227,10 +242,6 @@ const replyButton = () => {
 .contant {
   margin: 5px 10px 5px 52px;
   display: -webkit-box;
-  /*-webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;*/
 }
 
 .tit {

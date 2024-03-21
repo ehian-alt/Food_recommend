@@ -25,7 +25,7 @@ const pageReq = <pageRequest>({
 const commentItems = ref<commentsItem[]>([])
 
 let finshList = ref(false); // 是否全部加载完
-const getCommendItems = async (pageReq: pageRequest) => {
+const getCommendItems = async () => {
     if (finshList.value) {
         return
     }
@@ -41,11 +41,11 @@ const getCommendItems = async (pageReq: pageRequest) => {
 
 onMounted(() => {
     // 发送含推荐的请求
-    getCommendItems(pageReq);
+    getCommendItems();
 })
 
 defineExpose({
-    getItems: getCommendItems
+    getCommendItems
 })
 </script>
 
@@ -55,7 +55,7 @@ defineExpose({
         <navigator class="aitems" v-for="item in commentItems" :key="item.id"
             :url="`/pages/subpages/comInfo/comInfo?commentId=${item.id}`">
             <!-- 图片 -->
-            <image class="img-item" :src="item.images[0]" mode="widthFix" />
+            <image class="img-item" :src="item.images[0]" mode="aspectFill" />
             <p class="text-item">{{ item.content }}</p>
             <!-- 头像 -->
             <image class="avatar-item" :src="item.avatarUrl" />
@@ -63,9 +63,8 @@ defineExpose({
             <span class="nick-name">{{ item.nickName }}</span>
             <!-- 点赞 -->
             <view class="likes" @tap="">
+                <image v-if="true" class="icons" src="@/static/icons/eye.png" />
                 <span>{{ item.agree }}</span>
-                <image v-if="true" class="icons" src="@/static/icons/heart.png" />
-                <image v-else class="icons" src="@/static/icons/heart-fill.png" />
             </view>
         </navigator>
     </view>
@@ -91,6 +90,8 @@ defineExpose({
 }
 
 .img-item {
+    width: 160px;
+    height: 160px;
     border-radius: 4px;
     overflow: hidden;
     background-color: rgb(183, 184, 183);
@@ -116,8 +117,10 @@ defineExpose({
 
 .nick-name {
     float: left;
-    /* color:#343434; */
+    font-size: small;
+    color:#343434;
     margin-left: 5px;
+    padding-top: 8px;
 }
 
 .likes {

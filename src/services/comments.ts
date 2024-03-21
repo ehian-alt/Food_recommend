@@ -1,4 +1,4 @@
-import type { commentsItem, forumItem, repliesItem, replyParam } from "@/types/comments";
+import type { commentsItem, forumItem, newCommentParam, repliesItem, replyParam } from "@/types/comments";
 import type { pageRequest, pageResult } from "@/types/global";
 import { http } from "@/utils/http";
 /**
@@ -119,3 +119,27 @@ export const replyCommentService = (replyParam:replyParam) =>{
         data:replyParam,
     })
 }
+/**
+ * 给菜品发表新的评论
+ * @param comParam 
+ */
+export const newCommentService = (comParam:newCommentParam) =>{
+    http({
+        method:"POST",
+        url:"/user/comment",
+        data:comParam,
+    })
+}
+
+/**
+ * 论讨新发布讨论
+ * @param comParam 
+ */
+export const newForumService = (comParam:newCommentParam)=>{
+    http({
+        method:"POST",
+        url:"/user/forum",
+        data:comParam,
+    })
+}
+
