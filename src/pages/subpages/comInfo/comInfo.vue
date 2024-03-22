@@ -119,14 +119,16 @@ const replyButton = () => {
     </swiper>
 
     <view class="items-bottom">
-      <span >----{{ "&ensp;" + comment?.createTime + "&ensp;" }}----&emsp;&emsp;&emsp;</span>
+      <span>----{{ "&ensp;" + comment?.createTime + "&ensp;" }}----&emsp;&emsp;&emsp;</span>
       <!-- 浏览量 -->
       <!-- <image class="icons mar-rig" src="@/static/icons/eye.png" /><span>{{ comment?.agree }}&emsp;</span> -->
     </view>
 
-    <view>
-      <image :src="comment?.image" class="dish-img" mode="aspectFill"/><span>{{ comment?.dishName }}</span>
-    </view>
+    <navigator v-if="!isForum" class="dish-card" :url="`/pages/subpages/dishInfo/dishInfo?dishId=${comment?.dishId}&&isStar=${comment?.isStar}`">
+      <image :src="comment?.image" class="dish-img" mode="aspectFill" />
+      <uni-icons class="rig-icon" color="#808080" type="right" size="20"></uni-icons>
+      <span class="card-name">{{ comment?.dishName }}</span>
+    </navigator>
 
     <!-- 用户的回复 -->
     <view class="tit">评论/提问回复</view>
@@ -141,7 +143,7 @@ const replyButton = () => {
     </view>
   </view>
 
-  <!-- 回复按钮 -->
+  <!-- 回复 -->
   <view class="fixed-footer">
     <uni-row class="demo-uni-row" :width="730">
       <uni-col :span="1">
@@ -150,7 +152,7 @@ const replyButton = () => {
 
       <uni-col :span="16">
         <view class="demo-uni-col dark">
-          <input class="uni-input inp" placeholder="有什么想说的..." v-model="replyInput" />
+          <input class="uni-input inp" placeholder="&ensp;有什么想说的..." v-model="replyInput" />
         </view>
       </uni-col>
 
@@ -172,6 +174,26 @@ const replyButton = () => {
 </template>
 
 <style scoped>
+.dish-card {
+  margin: 0 10px 10px 42px;
+  background-color: #efefef;
+  border-radius: 5px;
+  border: #c0c0c0 solid 1px;
+  width: 75%;
+  position: relative;
+}
+.card-name{
+  position: relative;
+  float: right;
+  top: 10px;
+}
+.rig-icon{
+  position: relative;
+  float: right;
+  right: 0;
+  top: 10px;
+}
+
 .fill-block {
   height: 36px;
   background-color: #efefef;
@@ -179,8 +201,8 @@ const replyButton = () => {
 
 .inp {
   height: 36px;
-  border-radius: 5px;
-  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 100px;
+  box-shadow: 1px 2px 5px 2px rgba(110, 110, 110, 0.3);
 }
 
 .demo-uni-row {
@@ -195,22 +217,26 @@ const replyButton = () => {
 .dark {
   background-color: #f5f5f5;
 }
-.rep-btn{
+
+.rep-btn {
   color: #ffffff;
-  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 2px 5px 2px rgba(110, 110, 110, 0.3);
 }
+
 .light {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #ffb6c1;
 }
-.dish-img{
-  width: 50px;
-  height: 50px;
+
+.dish-img {
+  width: 40px;
+  height: 40px;
   border-radius: 5px;
-  
+  margin-right: 20px;
 }
+
 .avatar-nickname {
   margin-left: 10px;
   position: relative;

@@ -52,9 +52,9 @@ onMounted(()=>{
     <view class="contant"><text>{{ item.content }}</text></view>
     <!-- 其他信息，时间，回复数量 -->
     <view class="items-bottom">
-      <span>----{{ "&ensp;" + transFormatDate(item.createTime) + "&ensp;" }}----&emsp;</span>
+      <span>----{{ "&ensp;" + transFormatDate(item.createTime) + "&ensp;" }}----&emsp;&emsp;&emsp;&emsp;</span>
       <!-- 回复图标 -->
-      <image class="icons" src="@/static/icons/message.png" /><span>{{ item.repliesNum }}&emsp;</span>
+      <image class="icons" src="@/static/icons/message.png" /><span>&ensp;{{ item.repliesNum }}&emsp;</span>
       <span class="right-bottom">查看详情></span>
     </view>
   </navigator>
@@ -115,6 +115,7 @@ onMounted(()=>{
   color: #808080;
   font-size: 12px;
   display: flex;
+  align-items: center;
   margin: 5px 10px 10px 42px;
 }
 

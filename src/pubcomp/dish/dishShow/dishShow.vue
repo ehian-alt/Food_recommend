@@ -49,7 +49,7 @@ onMounted(async () => {
 <template>
   <view>
     <!-- 美食图片 -->
-    <image class="dish-bigpic" :src="dishInfo ? dishInfo?.image : 'https://img.yzcdn.cn/vant/cat.jpeg'"
+    <image class="dish-bigpic" :src="dishInfo?.image"
       mode="aspectFill" />
     <!-- 美食信息 -->
     <view class="dish-info">

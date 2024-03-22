@@ -28,7 +28,9 @@ export type commentsItem = {
     /** 评论的美食的图片 */
     image:string,
     /** 评论的美食的名称 */
-    dishName:string
+    dishName:string,
+    /** isStar */
+    isStar:boolean
 }
 
 // 回复信息类型
