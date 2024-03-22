@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { commentItemListService, commentsByDish, forumListService, transFormatDate } from '@/services/comments';
+import { forumListService, transFormatDate } from '@/services/comments';
 import type { pageRequest } from '@/types/global';
 import type { forumItem } from '@/types/comments'
 import { onMounted, ref } from 'vue';
 import { useuserStore } from '@/stores/user';
+import { onPullDownRefresh } from '@dcloudio/uni-app';
 
 const userStore = useuserStore();
 
@@ -31,13 +32,22 @@ const getForumItemList = async () => {
     finshList.value = true
   }
 }
-defineExpose({
-  forumList: getForumItemList
+
+onPullDownRefresh(()=>{
+  setTimeout(()=>{
+    finshList.value = false;
+    commentList.value=[]
+    getForumItemList();
+    uni.stopPullDownRefresh();  //停止刷新
+  }, 1000)
 })
+
 onMounted(()=>{
   getForumItemList();
 })
-
+defineExpose({
+  getForumItemList
+})
 </script>
 
 <template>

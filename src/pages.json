@@ -10,7 +10,9 @@
 		{
 			"path": "pages/home/home",
 			"style": {
-				"navigationBarTitleText": "九院美食推荐"
+				"navigationBarTitleText": "九院美食推荐",
+				"onReachBottomDistance": 50,
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -22,14 +24,15 @@
 		{
 			"path": "pages/forum/forum",
 			"style": {
-				"navigationBarTitleText": "论坛"
+				"navigationBarTitleText": "论坛",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/recommend/recommend",
 			"style": {
 				"navigationBarTitleText": "推荐",
-				"onReachBottomDistance": 100
+				"onReachBottomDistance": 50
 			}
 		},
 		{

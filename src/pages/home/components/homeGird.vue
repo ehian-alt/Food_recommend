@@ -4,14 +4,14 @@ import { ref, onMounted } from 'vue'
 import { commentItemListService } from '@/services/comments'
 import type { pageRequest } from '@/types/global';
 import { useuserStore } from '@/stores/user';
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app';
 import { http } from '@/utils/http';
 const userStore = useuserStore();
 
-onLoad(()=>{
+onLoad(() => {
     http({
-        method:'GET',
-        url:'/user/isLogin',
+        method: 'GET',
+        url: '/user/isLogin',
     })
 })
 
@@ -38,6 +38,15 @@ const getCommendItems = async () => {
         finshList.value = true
     }
 }
+// 下拉刷新
+onPullDownRefresh(()=> {
+    setTimeout(() => {
+        finshList.value=false;
+        commentItems.value = [];
+        getCommendItems();
+        uni.stopPullDownRefresh();  //停止刷新
+    }, 1000)
+})
 
 onMounted(() => {
     // 发送含推荐的请求
@@ -72,10 +81,8 @@ defineExpose({
 
 <style scoped>
 .gird-container {
-    /* position: relative; */
     display: flex;
     flex-wrap: wrap;
-    /* justify-content: space-between; */
     align-items: flex-start;
 }
 
@@ -118,7 +125,7 @@ defineExpose({
 .nick-name {
     float: left;
     font-size: small;
-    color:#343434;
+    color: #343434;
     margin-left: 5px;
     padding-top: 8px;
 }

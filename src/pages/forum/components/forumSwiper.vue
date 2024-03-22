@@ -3,10 +3,10 @@ import { ref } from 'vue'
 // 轮播图数据
 const swiperList = ref([{
     id: Number,
-    imgSrc: 'https://img.yzcdn.cn/vant/cat.jpeg'
+    imgSrc: 'https://jju-dish-recommend.oss-cn-hangzhou.aliyuncs.com/781a998b3d184b23ef655ca7b6bb45aa.jpeg'
 }, {
     id: Number,
-    imgSrc: 'https://img.yzcdn.cn/vant/cat.jpeg'
+    imgSrc: 'https://jju-dish-recommend.oss-cn-hangzhou.aliyuncs.com/e077716f57c57d9733d57632d536aa7d.jpg'
 }])
 // 请求轮播图数据
 

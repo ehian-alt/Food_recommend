@@ -2,14 +2,14 @@
 import forumSwiper from './components/forumSwiper.vue'
 import forumList from '@/pages/forum/forumList/forumList.vue'
 import type { dishCommendInstance } from '@/types/components';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { onReachBottom } from '@dcloudio/uni-app';
 
 const forumRef = ref<dishCommendInstance>();
 
 onReachBottom(()=>{
   console.log("onReachBottom");
-  forumRef.value.forumList();
+  forumRef.value?.getForumItemList();
 })
 
 </script>
@@ -41,7 +41,7 @@ onReachBottom(()=>{
   line-height: 50px; /* 行高与容器高度相同 */
   border-radius: 50%; /* 圆角 */
   z-index: 999; /* 确保按钮在最上层 */
-  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 2px 5px 2px rgba(110, 110, 110, 0.3);
 }
 .forum-swiper{
   background-color: rgb(255, 255, 255);
