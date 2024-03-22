@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { recommendService, userStarDish } from '@/services/dish';
+import { recommendService, searchService, userStarDish } from '@/services/dish';
 import type { recoPar, dishItem } from '@/types/dishInfoT';
 import { onMounted } from 'vue';
 import { useuserStore } from '@/stores/user';
@@ -20,7 +20,7 @@ const dishList = ref<dishItem[]>([])
 const recoParam = <recoPar>{
   page: 1,
   pageSize: 10,
-  openId: userStore.userInfo.openid
+  openid: userStore.userInfo.openid
 }
 
 const triggered = ref(false)
@@ -38,14 +38,6 @@ const onRefresh = () => {
     triggered.value = false; // 刷新完成，复位触发状态
   }, 2000);
 }
-const onRestore = () => {
-  console.log('复位');
-  triggered.value = false;
-}
-const onAbort = () => {
-  console.log('取消刷新');
-  triggered.value = false;
-}
 
 // 是否全部加载完
 let finshList = ref(false);
@@ -61,6 +53,20 @@ const getRecoItems = async () => {
     finshList.value = true
   }
 }
+
+const searchThat=async(keyWord:string)=>{
+  let result = await searchService(keyWord, userStore.userInfo.openid);
+  dishList.value = []
+  dishList.value.push(...result.data)
+}
+
+uni.$on('search', (data) => {
+  console.log("search",data);
+  
+  let keyWord = data.keyWord
+  console.log("search keyWord: ", keyWord);
+  searchThat(keyWord)
+})
 
 uni.$on('saveTaste', (data) => {
   ms = data.filterData
@@ -94,7 +100,7 @@ defineExpose({
 
 <template>
   <scroll-view :scroll-y="true" :refresher-enabled="true" :refresher-triggered="triggered" @refresher-pull="onPull"
-    @refresher-refresh="onRefresh" @refresher-restore="onRestore" @refresher-abort="onAbort">
+    @refresher-refresh="onRefresh">
     <navigator class="scroll-view-item" v-for="(item, key) in dishList" :key="item.dishId"
       :url="`/pages/subpages/dishInfo/dishInfo?dishId=${item.dishId}&&isStar=${item.isStar}`">
       <!-- 菜品图片区域 -->

@@ -2,13 +2,16 @@
 import { ref } from 'vue';
 
 const props = defineProps();
-const searchValue = ref('')
+const searchValue = ref()
 // 回车搜索
 const search = (res: any) => {
-  uni.showToast({
-    title: '搜索: ' + res.value,
-    icon: 'none'
-  })
+  console.log("res:",res.value);
+  
+  uni.switchTab({ 
+    url: '/pages/recommend/recommend',
+    success:()=>{
+      uni.$emit('search', {keyWord: res.value})
+  } })
 }
 // cancel取消
 const cancel = () => {

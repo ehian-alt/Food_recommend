@@ -1,3 +1,5 @@
+import type { dishItem, recoPar } from "@/types/dishInfoT";
+import type { pageResult } from "@/types/global";
 import type { userInfo } from "@/types/userInfo";
 import { http } from "@/utils/http";
 
@@ -21,5 +23,13 @@ export const addUserAPI = (myInfo:userInfo)=>{
         method:'POST',
         url:'/user',
         data:myInfo
+    })
+}
+
+export const myStarDishService = (recoParam:recoPar)=>{
+    return http<pageResult<dishItem>>({
+        method:'GET',
+        url:'/user/myStar',
+        data:recoParam,
     })
 }

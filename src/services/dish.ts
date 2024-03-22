@@ -28,4 +28,14 @@ export const dishInfoPage = (dishId:string) => {
         url:'/user/recommend?dishId='+dishId,
     })
 }
-
+// 搜索
+export const searchService = (keyWord:string, openid:string)=>{
+    return http<dishItem[]>({
+        method:'GET',
+        url:'/user/recommend/search',
+        data:{
+            keyWord:keyWord,
+            openid:openid
+        }
+    })
+}

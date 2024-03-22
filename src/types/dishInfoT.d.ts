@@ -39,5 +39,5 @@ export type recoPar = {
     /** 咸淡 */
     salinity: number,
     /** openId */
-    openId: string
+    openid: string
 }
