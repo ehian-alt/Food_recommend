@@ -25,6 +25,29 @@ const info = ref({
   spicy: '',
   salinity: ''
 })
+
+let itude =[
+  [29.6831,116.0189],[29.6814,116.0196],[29.6855,116.0193],[29.6854,116.0198],[29.6863,116.0188]
+]
+
+const navigatorToLocation = () => {
+  console.log("location");
+  
+  uni.openLocation({
+    latitude: itude[dishInfo.value!.canteen-1][0], // 目标地点的纬度，浮点数，范围为-90~90
+    longitude: itude[dishInfo.value!.canteen-1][1], // 目标地点的经度，浮点数，范围为-180~180
+    scale: 18, // 缩放比例，范围5~18
+    name: "九江学院"+info.value.canteen, // 位置名
+    address: dishInfo.value?.shopId[0]+"楼"+dishInfo.value?.shopId.substring(1, 3)+"号窗口", // 地址的详细说明
+    success() {
+      console.log('导航启动成功');
+    },
+    fail(error) {
+      console.log('导航启动失败', error);
+    }
+  });
+}
+
 const starClick = async () => {
   // 修改当前列表isStar的值
   dishInfo.value!.isStar = !dishInfo.value!.isStar;
@@ -49,8 +72,7 @@ onMounted(async () => {
 <template>
   <view>
     <!-- 美食图片 -->
-    <image class="dish-bigpic" :src="dishInfo?.image"
-      mode="aspectFill" />
+    <image class="dish-bigpic" :src="dishInfo?.image" mode="aspectFill" />
     <!-- 美食信息 -->
     <view class="dish-info">
       <!-- 美食名称 -->
@@ -68,9 +90,9 @@ onMounted(async () => {
       <!-- 价格 -->
       <view class="price"><span class="dolle-fu">￥</span>{{ dishInfo?.price }}</view>
       <!-- 食堂导航 -->
-      <view class="location">
+      <view class="location" @tap="navigatorToLocation">
         <image class="icons ty-icon" src="@/static/icons/location-fill.png" />
-        <span>导航</span>
+        <span>去这里</span>
       </view>
     </view>
   </view>

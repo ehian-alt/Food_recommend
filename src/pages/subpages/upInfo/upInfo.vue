@@ -4,13 +4,14 @@ import type { userInfo } from '@/types/userInfo';
 import { onLoad } from '@dcloudio/uni-app';
 import { updateMyInfoAPI, addUserAPI } from '@/services/mine'
 import { useuserStore } from '@/stores/user';
+import { loginAPI } from '@/services/login';
 const userStore = useuserStore()
 
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+const defaultAvatar = 'https://jju-dish-recommend.oss-cn-hangzhou.aliyuncs.com/0df6c8c7f109aa7b67e7cb15e6f8d025.jpg';
 
-let Info = ref<userInfo>({
-  openId: '',
-  avatarUrl: defaultAvatarUrl,
+const Info = ref<userInfo>({
+  openid: '',
+  avatarUrl: defaultAvatar,
   nickName: '',
   gender: 1,
   state: 1
@@ -22,32 +23,49 @@ const sex = ref([
 ])
 
 const onChooseAvatar = (e: any) => {
-  Info.value.avatarUrl = e.detail.avatarUrl
+  console.log(e.detail.avatarUrl);
+  Info.value.avatarUrl = e.detail.avatarUrl;
+  console.log("new avatar", Info.value.avatarUrl);
 }
 
 const setNickName = (e: any) => {
   Info.value.nickName = e.detail.value
 }
-
 let upOrIn = 1;
-const comfire = async () => {
-  console.log(Info.value);
-  if (upOrIn) {
-    /* TODO 发送更新请求*/
-    await updateMyInfoAPI(Info.value)
-
-  } else {
-    /* TODO 发送插入请求*/
-    await addUserAPI(Info.value)
+const addUser = async (Info: userInfo) => {
+  await addUserAPI(Info)
+}
+const login = async (openid: string) => {
+  let res = await loginAPI(openid);
+  userStore.setUserInfo(res.data)
+}
+onLoad((query) => {
+  if (query?.newUser === '1') {
+    upOrIn = 0;
+    Info.value.openid = query?.openid;
+    addUser(Info.value)
+    setTimeout(() => {
+      login(Info.value.openid)
+    }, 1000)
   }
+  console.log("Info", Info.value);
+})
+
+const comfire = async () => {
+  console.log("发送更新请求", Info.value);
+  /* TODO 发送更新请求*/
+  await updateMyInfoAPI(Info.value)
+  // userStore.setUserInfo(Info.value)
+  uni.removeStorageSync('myInfo');
   uni.showToast({
-    icon: 'none',
+    icon: 'success',
     title: '保存成功！'
   })
-  uni.removeStorageSync('myInfo');
-  uni.reLaunch({
-    url: '/pages/mine/mine',
-  })
+  setTimeout(() => {
+    uni.reLaunch({
+      url: '/pages/home/home',
+    })
+  }, 1500)
 }
 
 onLoad(() => {
@@ -61,7 +79,7 @@ onLoad(() => {
     },
     fail: (_fail) => {
       upOrIn = 0;
-      Info.value.openId = userStore.userInfo.openid
+      Info.value.openid = userStore.userInfo.openid
     },
   })
 })

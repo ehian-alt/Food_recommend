@@ -1,5 +1,5 @@
 export type userInfo = {
-    openId:string,
+    openid:string,
     avatarUrl:string,
     nickName:string,
     gender:number,

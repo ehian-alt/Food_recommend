@@ -31,7 +31,7 @@ const getOpenId = async () => {
     console.log("未进行注册");
     uni.showToast({ icon: 'none', title: "账号信息未完善" })
 
-    uni.navigateTo({ url: "/pages/subpages/upInfo/upInfo" })
+    uni.navigateTo({ url: "/pages/subpages/upInfo/upInfo?newUser="+"1"+"&&openid="+openid })
   } else {
     console.log("登陆成功");
     userStore.setUserInfo(res.data);

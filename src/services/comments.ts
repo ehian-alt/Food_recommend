@@ -1,5 +1,4 @@
 import type { commentsItem, forumItem, newCommentParam, repliesItem, replyParam } from "@/types/comments";
-import type { dishItem } from "@/types/dishInfoT";
 import type { pageRequest, pageResult } from "@/types/global";
 import { http } from "@/utils/http";
 /**
