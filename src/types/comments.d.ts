@@ -30,7 +30,11 @@ export type commentsItem = {
     /** 评论的美食的名称 */
     dishName:string,
     /** isStar */
-    isStar:boolean
+    isStar:boolean,
+    /** 标签序号 */
+    tags:string,
+    /** 标签列表 */
+    tagList:number[]
 }
 
 // 回复信息类型

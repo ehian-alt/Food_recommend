@@ -1,10 +1,19 @@
 <script lang="ts" setup>
 import { useuserStore } from '@/stores/user';
 import { onLoad } from '@dcloudio/uni-app';
-import { loginAPI } from '@/services/login';
+import { getTagsService, loginAPI } from '@/services/login';
 const userStore = useuserStore();
 
 let openid = ''
+// 获取标签信息并保存
+const getTags = async ()=>{
+  let res = await getTagsService();
+  let tags = JSON.stringify(res.data);
+  uni.setStorage({
+    key:'tags',
+    data:tags,
+  })
+}
 onLoad(() => {
   wx.login({
     success(res) {
@@ -35,6 +44,7 @@ const getOpenId = async () => {
   } else {
     console.log("登陆成功");
     userStore.setUserInfo(res.data);
+
     // 跳转到首页
     uni.showToast({
       icon: 'none',
@@ -45,7 +55,7 @@ const getOpenId = async () => {
       url: '/pages/home/home',
     })
   }
-
+  getTags();
 }
 
 </script>

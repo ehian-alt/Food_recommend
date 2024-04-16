@@ -16,3 +16,13 @@ export const loginAPI = (openid: string) => {
   })
 }
 
+/**
+ * 获取数据库标签列表
+ * @returns 标签列表
+ */
+export const getTagsService = ()=>{
+  return http<string[]>({
+    method:'GET',
+    url:'/user/tags',
+  })
+}

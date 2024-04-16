@@ -12,16 +12,46 @@ interface dish {
 }
 const props = defineProps<dish>();
 const { dishId } = toRefs(props);
-
+/** 显示评论 */
 const commentList = ref<commentsItem[]>([])
 
+/** 所有评论存储 */
+const allComment = ref<commentsItem[]>([])
+
+// 标签列表
+const tags = ref<string[]>()
+/** 评论标签 {序号, 是否选中} */
+const tagNo = new Map<number, boolean>()
 onMounted(async () => {
+  // 数据库所有标签
+  uni.getStorage({
+    key: "tags",
+    success: (success) => {
+      let obs = success.data
+      if (obs) {
+        tags.value = JSON.parse(obs);
+
+      }
+    },
+  })
+
   // 查询菜品为dishId的评论
   let result = await commentsByDish(dishId.value);
+  commentList.value = result.data;
+  allComment.value = result.data;
 
-  commentList.value = result.data
   for (let i = 0; i < commentList.value.length; i++) {
+    // 日期格式
     commentList.value[i].createTime = transFormatDate(commentList.value[i].createTime);
+    // 获取标签编号
+    let inp = commentList.value[i].tags
+    const matches = inp.match(/\d+/g);
+    let tl = matches?.map(Number) as number[];
+    allComment.value[i].tagList = tl;
+    
+    for (let index = 0; index < tl.length; index++) {
+      tagNo.set(tl[i], true);
+    }
   }
 
 })
@@ -29,13 +59,44 @@ onMounted(async () => {
 const pageReq = <pageRequest>{
   page: 1,
   pageSize: 10,
-  openid:userStore.userInfo.openid,
-  supply:0
+  openid: userStore.userInfo.openid,
+  supply: 0
+}
+
+let checked = -1;
+
+const setInverted = (tag: number) => {
+  console.log(tag);
+
+  if (checked !== -1) {
+    tagNo.set(checked, true);
+  }
+  tagNo.set(tag, false);
+  checked = tag;
+
+  console.log(tagNo);
+  // 筛选出含有这个标签的评论
+  commentList.value = []
+  for (let i = 0; i < allComment.value.length; i++) {
+    if (allComment.value[i].tagList.indexOf(tag) !== -1) {
+      commentList.value.push(allComment.value[i])
+    }
+  }
+
 }
 
 </script>
 
 <template>
+
+  <scroll-view class="scroll-view_H" :scroll-x="true">
+    <block v-for="(item, key) in tagNo" :key="key">
+      <uni-tag class="tags" :circle="true" :inverted="tagNo.get(item[0])" :text="tags![item[0] - 1]" type="primary"
+        @click="setInverted(item[0])" />
+    </block>
+  </scroll-view>
+
+
   <navigator class="commend-items" v-for="(item, id) in commentList" :key="item.id"
     :url="`/pages/subpages/comInfo/comInfo?commentId=${item.id}`">
     <!-- 头像，昵称，评分 -->
@@ -50,7 +111,7 @@ const pageReq = <pageRequest>{
     <view class="com-pics">
       <image class="compic-item" mode="aspectFill" v-for="(image, key) in item.images" :key="key" :src="image"></image>
     </view>
-    <!-- 其他信息，时间，回复数量，点赞信息 -->
+    <!-- 其他信息，时间，回复数量，浏览量 -->
     <view class="items-bottom">
       <span>----{{ "&ensp;" + item.createTime + "&ensp;" }}----&emsp;</span>
       <!-- 回复图标 -->
@@ -63,6 +124,18 @@ const pageReq = <pageRequest>{
 </template>
 
 <style scoped>
+.scroll-view_H {
+  white-space: nowrap;
+  /* 滚动必须加的属性 */
+  width: 100%;
+  height: 26px;
+  padding: 20rpx;
+}
+
+.tags {
+  margin-right: 10px;
+}
+
 .commend-items {
   margin-left: 5px;
   position: relative;
