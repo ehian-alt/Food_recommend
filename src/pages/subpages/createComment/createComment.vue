@@ -3,7 +3,8 @@ import type { newCommentParam } from '@/types/comments';
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { useuserStore } from '@/stores/user';
-import { newCommentService, newForumService } from '@/services/comments';
+import { newCommentService } from '@/services/comments';
+import { newForumService } from '@/services/forums';
 const userStore = useuserStore();
 interface param {
   dishId: string,
@@ -14,16 +15,22 @@ const state = ref([
   { value: 0, text: "否" },
   { value: 1, text: "是" }
 ])
+/** 论坛发帖是投票形势的吗 */
+const forumMode = ref([
+  { value: 0, text: "提问" },
+  { value: 1, text: "投票" }
+])
 
 const pageParam = ref<param>()
 const content = ref<string>()
 let imageValue: string[] = [];
 
+/** 新增评论的参数表单 */
 const comData = ref<newCommentParam>({
   content: '',
   imagePath: [],
   rate: 3,
-  state: 1,
+  state: 0,
   dishId: pageParam.value?.dishId as string,
   openid: userStore.userInfo.openid
 })
@@ -79,17 +86,24 @@ const comfireComment = async () => {
     })
     setTimeout(() => {
       newComment(comData.value);
-      uni.navigateBack({
-        delta: 1,//返回层数，2则上上页
+      uni.reLaunch({
+        url: '/pages/recommend/recommend',
       })
-    }, 3000);
+    }, 1000);
 
   } else {
     // 论坛发表，发送请求
     newForum(comData.value);
+    uni.showLoading({
+      title: '正在发送请求',
+      mask: true
+    })
+    setTimeout(() => {
+      uni.reLaunch({
+        url: '/pages/forum/forum',
+      })
+    }, 1000);
   }
-
-
 }
 
 onLoad((query) => {
@@ -102,6 +116,10 @@ onLoad((query) => {
 <template>
   <view class="view-com pdlr">
     <textarea class="input-cont" v-model="content" placeholder="说点什么......" />
+  </view>
+
+  <view class="view-com forumMode" v-if="pageParam?.mode !== '1'">
+    <uni-data-checkbox v-model="comData.state" :localdata="forumMode"></uni-data-checkbox>
   </view>
 
   <view v-if="pageParam?.mode === '1'">
@@ -128,6 +146,9 @@ onLoad((query) => {
 </template>
 
 <style scoped>
+.forumMode{
+  padding: 0 20px;
+}
 .view-com {
   width: 100%;
   margin: 10px 0;

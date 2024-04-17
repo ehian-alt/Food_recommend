@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { commentsByDish, forumListService, transFormatDate } from '@/services/comments';
+import { commentsByDish, transFormatDate } from '@/services/comments';
 import type { commentsItem } from '@/types/comments';
 import type { pageRequest } from '@/types/global';
 import { onMounted, toRefs, ref } from 'vue';
@@ -47,10 +47,12 @@ onMounted(async () => {
     let inp = commentList.value[i].tags
     const matches = inp.match(/\d+/g);
     let tl = matches?.map(Number) as number[];
+    console.log(i, " 标签列表 ", ...tl);
+    
     allComment.value[i].tagList = tl;
     
     for (let index = 0; index < tl.length; index++) {
-      tagNo.set(tl[i], true);
+      tagNo.set(tl[index], true);
     }
   }
 

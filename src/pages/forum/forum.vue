@@ -47,7 +47,7 @@ onReachBottom(()=>{
   background-color: rgb(255, 255, 255);
 }
 .form-commend{
-  padding-left: 20px;
+  /* padding-left: 20px; */
   margin-top: 10px;
   background-color: #fff;
 }

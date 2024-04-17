@@ -1,20 +1,25 @@
 <script lang="ts" setup>
-import { forumListService, transFormatDate } from '@/services/comments';
+import { transFormatDate } from '@/services/comments';
+import { forumListService, voteService } from '@/services/forums'
 import type { pageRequest } from '@/types/global';
-import type { forumItem } from '@/types/comments'
+import type { forumItem } from '@/types/comments';
+import type { userVoteParam } from '@/types/forum.d.ts';
 import { onMounted, ref } from 'vue';
 import { useuserStore } from '@/stores/user';
 import { onPullDownRefresh } from '@dcloudio/uni-app';
 
 const userStore = useuserStore();
 
-const commentList = ref<forumItem[]>([])
+/** 投票区域列表 */
+const commentVoteList = ref<forumItem[]>([])
+/** 互助区域列表 */
+const commentHelpList = ref<forumItem[]>([])
 
 const pageReq = <pageRequest>{
   page: 1,
   pageSize: 10,
-  openid:userStore.userInfo.openid,
-  supply:0
+  openid: userStore.userInfo.openid,
+  supply: 1
 }
 // 论坛请求
 // 是否全部加载完
@@ -24,7 +29,11 @@ const getForumItemList = async () => {
     return
   }
   let result = await forumListService(pageReq)
-  commentList.value.push(...result.data.items)
+  if (pageReq.supply === 1) {
+    commentVoteList.value.push(...result.data.items);
+  } else {
+    commentHelpList.value.push(...result.data.items);
+  }
 
   if (pageReq.page < result.data.pageCount) {
     pageReq.page += 1
@@ -33,16 +42,73 @@ const getForumItemList = async () => {
   }
 }
 
-onPullDownRefresh(()=>{
-  setTimeout(()=>{
-    finshList.value = false;
-    commentList.value=[]
+/** 触底加载 */
+onPullDownRefresh(() => {
+  setTimeout(() => {
     getForumItemList();
     uni.stopPullDownRefresh();  //停止刷新
   }, 1000)
 })
 
-onMounted(()=>{
+/** 区域颜色 */
+const voteColor = ref('#ffb6c1')
+const helpColor = ref('#000000')
+
+/** 切换区域 */
+const tabArea = (area: number) => {
+  pageReq.supply = area;
+  pageReq.page = 1;
+  finshList.value = false;
+  if (area === 1) {
+    // 投票
+    voteColor.value = '#ffb6c1';
+    helpColor.value = '#000000';
+    commentVoteList.value = [];
+  } else {
+    // 互助
+    helpColor.value = '#ffb6c1';
+    voteColor.value = '#000000';
+    commentHelpList.value = [];
+  }
+  getForumItemList();
+}
+
+/** 投票参数 */
+const voteParam = <userVoteParam>{}
+
+/** 发起投票请求函数 */
+const voteThatDish = async (voteP:userVoteParam)=>{
+  await voteService(voteP);
+}
+
+/** 投票选项 */
+const voteItems = ref([
+  { text: '好吃', value: 0 },
+  { text: '一般', value: 1 },
+  { text: '较差', value: 2 }
+])
+/** 投票按钮 */
+const vote = (ind: number, forumId: number) => {
+  console.log(ind);
+  console.log(commentVoteList.value[ind].checked);
+  console.log(forumId);
+
+  if (commentVoteList.value[ind].checked) {
+    // 准备参数
+    voteParam.openid = userStore.userInfo.openid;
+    voteParam.checked = commentVoteList.value[ind].checked;
+    voteParam.forumId = forumId;
+    /** 发投票的请求 */
+
+  } else {
+    uni.showToast({
+      icon: 'error',
+      title: '请先选择'
+    })
+  }
+}
+
+onMounted(() => {
   getForumItemList();
 })
 defineExpose({
@@ -51,7 +117,50 @@ defineExpose({
 </script>
 
 <template>
-  <navigator class="commend-items" v-for="item in commentList" :key="item.id"
+  <uni-row class="demo-uni-row" :width="730">
+    <uni-col :span="12">
+      <view class="forum-area" :style="{ color: voteColor }" @click="tabArea(1)">投票区域</view>
+    </uni-col>
+    <uni-col :span="12">
+      <view class="forum-area" :style="{ color: helpColor }" @click="tabArea(0)">互助区域</view>
+    </uni-col>
+  </uni-row>
+
+  <view v-if="pageReq.supply === 1" class="commend-items" v-for="(item, key) in commentVoteList" :key="key">
+    <!-- 头像，昵称 -->
+    <view class="avatar-nickname">
+      <image class="avatar-item" :src="item.avatarUrl" />
+      <span class="nickname">{{ item.nickName }}</span>
+    </view>
+    <!-- 评论文字 -->
+    <view class="contant"><text>{{ item.content }}</text></view>
+    <!-- 投票结果 -->
+    <view v-if="item.isVoted">
+      <progress class="vote-item" :percent="index === 0 ? item.good : index === 1 ? item.just : item.bad"
+        activeColor="#ffb6c1" :stroke-width="30" v-for="(vote, index) in voteItems" :key="index">
+        <view class="vote-content">
+          {{ vote.text }}
+        </view>
+        <view class="vote-count">
+          {{ index === 0 ? item.good : index === 1 ? item.just : item.bad }} 票
+        </view>
+      </progress>
+    </view>
+    <!-- 投票 -->
+    <view v-else>
+      <uni-data-checkbox mode="button" v-model="item.checked" selectedColor="#ffb6c1"
+        :localdata="voteItems"></uni-data-checkbox>
+      <view style="height: 42px;">
+        <button :plain="true" size="mini" @click="vote(key, item.id)" class="vote-btn">投票</button>
+      </view>
+    </view>
+
+    <view class="items-bottom">
+      <span>----{{ "&ensp;" + transFormatDate(item.createTime) + "&ensp;" }}----&emsp;&emsp;&emsp;&emsp;</span>
+    </view>
+  </view>
+
+  <navigator v-if="pageReq.supply === 0" class="commend-items" v-for="(item, id) in commentHelpList"
     :url="`/pages/subpages/comInfo/comInfo?forumId=${item.id}`">
     <!-- 头像，昵称 -->
     <view class="avatar-nickname">
@@ -71,7 +180,48 @@ defineExpose({
 </template>
 
 <style scoped>
+.vote-btn {
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: #ffb6c1;
+  border-color: #ffb6c1;
+  width: 235px;
+  float: left;
+}
+
+.forum-area {
+  text-align: center;
+  height: 36px;
+  padding-top: 10px;
+  margin: auto;
+  font-size: large;
+}
+
+.vote-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.vote-content {
+  width: 55px;
+  position: relative;
+  float: left;
+  left: 10px;
+}
+
+.vote-count {
+  position: relative;
+  float: right;
+  right: 80px;
+}
+
 .commend-items {
+  border-top: #efefef solid 2px;
+  padding-left: 20px;
   margin-left: 5px;
   position: relative;
   /* border-top: #f0f0f0 1px solid; */
@@ -100,7 +250,7 @@ defineExpose({
 }
 
 .contant {
-  margin: 5px 10px 5px 42px;
+  margin: 20px 10px 5px 5px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -126,7 +276,7 @@ defineExpose({
   font-size: 12px;
   display: flex;
   align-items: center;
-  margin: 5px 10px 10px 42px;
+  margin: 5px 10px 10px 5px;
 }
 
 .icons {
