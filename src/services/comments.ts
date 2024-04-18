@@ -41,7 +41,7 @@ export const repliesByCommentId = (commentId: number) => {
  * @param dateTime 
  * @returns 
  */
-export const transFormatDate = (dateTime:string)=>{
+export const transFormatDate = (dateTime: string) => {
     let date = new Date(dateTime);
     let month = (date.getMonth() + 1).toString().padStart(2, '0');
     let day = date.getDate().toString().padStart(2, '0');
@@ -55,11 +55,11 @@ export const transFormatDate = (dateTime:string)=>{
  * @param pageReq 
  * @returns 
  */
-export const commentItemListService = (pageReq:pageRequest)=>{
+export const commentItemListService = (pageReq: pageRequest) => {
     return http<pageResult<commentsItem>>({
-        method:'GET',
-        url:'/user/home',
-        data:pageReq
+        method: 'GET',
+        url: '/user/home',
+        data: pageReq
     })
 }
 
@@ -67,24 +67,32 @@ export const commentItemListService = (pageReq:pageRequest)=>{
  * 回复评论或推荐，添加记录
  * @param replyParam 
  */
-export const replyCommentService = (replyParam:replyParam) =>{
+export const replyCommentService = (replyParam: replyParam) => {
     http({
-        method:'POST',
-        url:'/user/comment/reply',
-        data:replyParam,
+        method: 'POST',
+        url: '/user/comment/reply',
+        data: replyParam,
     })
 }
 /**
  * 给菜品发表新的评论
  * @param comParam 
  */
-export const newCommentService = (comParam:newCommentParam) =>{
+export const newCommentService = (comParam: newCommentParam) => {
     http({
-        method:"POST",
-        url:"/user/comment",
-        data:comParam,
+        method: "POST",
+        url: "/user/comment",
+        data: comParam,
     })
 }
 
 
-
+/**
+ * 获得我的评论
+ */
+export const getMyComments = (openid: string) => {
+    return http<commentsItem[]>({
+        method: 'GET',
+        url: '/user/comment/myComments?openid=' + openid,
+    })
+}

@@ -114,6 +114,24 @@
 					"style": {
 						"navigationBarTitleText": "讨论"
 					}
+				},
+				{
+					"path": "myComment/myComment",
+					"style": {
+						"navigationBarTitleText": "我的评论"
+					}
+				},
+				{
+					"path": "myQuestion/myQuestion",
+					"style": {
+						"navigationBarTitleText": "我的求助"
+					}
+				},
+				{
+					"path": "myVote/myVote",
+					"style": {
+						"navigationBarTitleText": "我发起的投票"
+					}
 				}
 			]
 		}

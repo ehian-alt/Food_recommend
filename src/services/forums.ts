@@ -72,3 +72,20 @@ export const voteService = (votep:userVoteParam)=>{
         data:votep
     })
 }
+
+/**
+ * 获取我的求助
+ */
+export const getMyHelpForumService = (openid:string)=>{
+    return http<forumItem[]>({
+        method:'GET',
+        url:'/user/forum/myForum?openid='+openid,
+    })
+}
+
+export const getMyVotesService = (openid:string)=>{
+    return http<forumItem[]>({
+        method:'GET',
+        url:'/user/forum/myVote?openid='+openid,
+    })
+}

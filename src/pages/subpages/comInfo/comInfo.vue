@@ -110,8 +110,8 @@ const replyButton = () => {
     </view>
     <view class="contant"><text>{{ comment?.content }}</text></view>
 
-    <!-- 图片, 报错-->
-    <swiper v-if="comment!.images !== undefined && comment!.images.length > 0" indicator-dots autoplay circular
+    <!-- 图片 -->
+    <swiper v-if="comment?.images && comment!.images.length > 0" indicator-dots autoplay circular
       indicator-active-color="#efefef" :interval="3000" :duration="1000">
       <swiper-item class="swiper-item" v-for="imageUrl in comment?.images" :key="imageUrl">
         <view class="swiper-img">

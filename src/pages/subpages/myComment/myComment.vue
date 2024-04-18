@@ -1,105 +1,25 @@
 <script lang="ts" setup>
-import { commentsByDish, transFormatDate } from '@/services/comments';
-import type { commentsItem } from '@/types/comments';
-import type { pageRequest } from '@/types/global';
-import { onMounted, toRefs, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useuserStore } from '@/stores/user';
-
+import type { commentsItem } from '@/types/comments';
+import { getMyComments, transFormatDate } from '@/services/comments';
 const userStore = useuserStore();
 
-interface dish {
-  dishId: string
-}
-const props = defineProps<dish>();
-const { dishId } = toRefs(props);
 /** 显示评论 */
 const commentList = ref<commentsItem[]>([])
 
-/** 所有评论存储 */
-const allComment = ref<commentsItem[]>([])
-
-// 标签列表
-const tags = ref<string[]>()
-/** 评论标签 {序号, 是否选中} */
-const tagNo = new Map<number, boolean>()
-onMounted(async () => {
-  // 数据库所有标签
-  uni.getStorage({
-    key: "tags",
-    success: (success) => {
-      let obs = success.data
-      if (obs) {
-        tags.value = JSON.parse(obs);
-
-      }
-    },
-  })
-
-  // 查询菜品为dishId的评论
-  let result = await commentsByDish(dishId.value);
+onMounted(async ()=>{
+  let result = await getMyComments(userStore.userInfo.openid);
   commentList.value = result.data;
-  allComment.value = result.data;
-
   for (let i = 0; i < commentList.value.length; i++) {
     // 日期格式
     commentList.value[i].createTime = transFormatDate(commentList.value[i].createTime);
-    // 获取标签编号
-    let inp = commentList.value[i].tags
-    const matches = inp.match(/\d+/g);
-    let tl = matches?.map(Number) as number[];
-    console.log(i, " 标签列表 ", ...tl);
-    
-    allComment.value[i].tagList = tl;
-    
-    for (let index = 0; index < tl.length; index++) {
-      tagNo.set(tl[index], true);
-    }
   }
-
 })
-
-// const pageReq = <pageRequest>{
-//   page: 1,
-//   pageSize: 10,
-//   openid: userStore.userInfo.openid,
-//   supply: 0
-// }
-
-let checked = -1;
-
-/** 点击标签 */
-const setInverted = (tag: number) => {
-  console.log(tag);
-
-  if (checked !== -1) {
-    tagNo.set(checked, true);
-  }
-  tagNo.set(tag, false);
-  checked = tag;
-
-  console.log(tagNo);
-  // 筛选出含有这个标签的评论
-  commentList.value = []
-  for (let i = 0; i < allComment.value.length; i++) {
-    if (allComment.value[i].tagList.indexOf(tag) !== -1) {
-      commentList.value.push(allComment.value[i])
-    }
-  }
-
-}
 
 </script>
 
 <template>
-
-  <scroll-view class="scroll-view_H" :scroll-x="true">
-    <block v-for="(item, key) in tagNo" :key="key">
-      <uni-tag class="tags" :circle="true" :inverted="tagNo.get(item[0])" :text="tags![item[0] - 1]" type="primary"
-        @click="setInverted(item[0])" />
-    </block>
-  </scroll-view>
-
-
   <navigator class="commend-items" v-for="(item, id) in commentList" :key="item.id"
     :url="`/pages/subpages/comInfo/comInfo?commentId=${item.id}`">
     <!-- 头像，昵称，评分 -->
@@ -127,22 +47,10 @@ const setInverted = (tag: number) => {
 </template>
 
 <style scoped>
-.scroll-view_H {
-  white-space: nowrap;
-  /* 滚动必须加的属性 */
-  width: 100%;
-  height: 26px;
-  padding: 20rpx;
-}
-
-.tags {
-  margin-right: 10px;
-}
-
 .commend-items {
   margin-left: 5px;
   position: relative;
-  /* border-top: #f0f0f0 1px solid; */
+  margin-bottom: 8px;
   border-bottom: #f0f0f0 2px solid;
 }
 

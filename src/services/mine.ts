@@ -1,3 +1,4 @@
+import type { commentsItem } from "@/types/comments";
 import type { dishItem, recoPar } from "@/types/dishInfoT";
 import type { pageResult } from "@/types/global";
 import type { userInfo } from "@/types/userInfo";
@@ -10,29 +11,29 @@ import { http } from "@/utils/http";
 export const getInfoByOpenid = (openid: string) => {
     return http<userInfo>({
         method: 'GET',
-        url: '/user?openid='+openid
+        url: '/user?openid=' + openid
     })
 }
 /**
  * 用户信息更新修改
  * @param myInfo 
  */
-export const updateMyInfoAPI = (myInfo:userInfo)=>{
+export const updateMyInfoAPI = (myInfo: userInfo) => {
     http({
-        method:'PUT',
-        data:myInfo,
-        url:'/user'
+        method: 'PUT',
+        data: myInfo,
+        url: '/user'
     })
 }
 /**
  * 添加用户
  * @param myInfo 
  */
-export const addUserAPI = (myInfo:userInfo)=>{
+export const addUserAPI = (myInfo: userInfo) => {
     http({
-        method:'POST',
-        url:'/user/new',
-        data:myInfo
+        method: 'POST',
+        url: '/user/new',
+        data: myInfo
     })
 }
 /**
@@ -40,10 +41,10 @@ export const addUserAPI = (myInfo:userInfo)=>{
  * @param recoParam 
  * @returns 
  */
-export const myStarDishService = (recoParam:recoPar)=>{
+export const myStarDishService = (recoParam: recoPar) => {
     return http<pageResult<dishItem>>({
-        method:'GET',
-        url:'/user/myStar',
-        data:recoParam,
+        method: 'GET',
+        url: '/user/myStar',
+        data: recoParam,
     })
 }
