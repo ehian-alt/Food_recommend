@@ -104,7 +104,7 @@ onMounted(async () => {
       <view>辣度: &ensp;{{ info.spicy }}</view>
       <view>咸淡: &ensp;{{ info.salinity }}</view>
       <view>平均评分: &ensp;{{ dishInfo?.score }}</view>
-      <view>xx人已收藏</view>
+      <view>{{ dishInfo?.numOfStar }}人已收藏</view>
     </view>
   </view>
 

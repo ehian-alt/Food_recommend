@@ -48,10 +48,11 @@ onMounted(async ()=>{
 
 <style scoped>
 .commend-items {
+  background-color: #fff;
   margin-left: 5px;
   position: relative;
-  margin-bottom: 8px;
-  border-bottom: #f0f0f0 2px solid;
+  /* margin-bottom: 8px; */
+  border-bottom: #f0f0f0 3px solid;
 }
 
 .avatar-nickname {

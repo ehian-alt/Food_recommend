@@ -150,8 +150,8 @@ onMounted(()=>{
   border-top: #efefef solid 2px;
   padding-left: 20px;
   position: relative;
-  margin-bottom: 8px;
-  border-bottom: #f0f0f0 2px solid;
+  /* margin-bottom: 5px; */
+  border-bottom: #f0f0f0 3px solid;
 }
 
 .avatar-nickname {

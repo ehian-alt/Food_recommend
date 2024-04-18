@@ -24,7 +24,9 @@ export type dishItem = {
     /** 菜品咸淡 */
     salinity: number
     /** 是否收藏 */
-    isStar: boolean
+    isStar: boolean,
+    /** 几人收藏 */
+    numOfStar:number
 }
 
 export type recoPar = {

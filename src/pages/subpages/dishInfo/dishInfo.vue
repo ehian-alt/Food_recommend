@@ -18,7 +18,6 @@ onLoad((query) => {
   <dishShow :dishId="dishId" :isStar="isStar"></dishShow>
   <view class="dish-commend">
     <view class="tit">菜品评论</view>
-    
     <dishCommend :dishId="dishId"></dishCommend>
   </view>
 
