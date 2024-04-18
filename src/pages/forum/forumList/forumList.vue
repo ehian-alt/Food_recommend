@@ -90,16 +90,25 @@ const voteItems = ref([
 /** 投票按钮 */
 const vote = (ind: number, forumId: number) => {
   console.log(ind);
-  console.log(commentVoteList.value[ind].checked);
   console.log(forumId);
-
-  if (commentVoteList.value[ind].checked) {
+  let che = commentVoteList.value[ind].checked
+  if (che!==undefined) {
     // 准备参数
     voteParam.openid = userStore.userInfo.openid;
-    voteParam.checked = commentVoteList.value[ind].checked;
+    voteParam.checked = che;
     voteParam.forumId = forumId;
     /** 发投票的请求 */
-
+    voteThatDish(voteParam)
+    /** 给投票设置一下 */
+    commentVoteList.value[ind].isVoted=true;
+    /** 票数 */
+    che===0 ? commentVoteList.value[ind].good+=1 : che===1? commentVoteList.value[ind].just+=1 : commentVoteList.value[ind].bad+=1;
+    /** 提示 */
+    uni.showToast({
+      title: '成功',
+      icon: 'success',
+      duration: 500
+    })
   } else {
     uni.showToast({
       icon: 'error',
@@ -145,6 +154,10 @@ defineExpose({
           {{ index === 0 ? item.good : index === 1 ? item.just : item.bad }} 票
         </view>
       </progress>
+
+      <view style="height: 42px;">
+        <span class="is-voted">已投票</span>
+      </view>
     </view>
     <!-- 投票 -->
     <view v-else>
@@ -161,7 +174,7 @@ defineExpose({
   </view>
 
   <navigator v-if="pageReq.supply === 0" class="commend-items" v-for="(item, id) in commentHelpList"
-    :url="`/pages/subpages/comInfo/comInfo?forumId=${item.id}`">
+    :key="id" :url="`/pages/subpages/comInfo/comInfo?forumId=${item.id}`">
     <!-- 头像，昵称 -->
     <view class="avatar-nickname">
       <image class="avatar-item" :src="item.avatarUrl" />
@@ -180,6 +193,10 @@ defineExpose({
 </template>
 
 <style scoped>
+.is-voted{
+  color: #ffb6c1;
+  padding: 10px;
+}
 .vote-btn {
   margin-top: 10px;
   color: #ffffff;
@@ -216,7 +233,7 @@ defineExpose({
 .vote-count {
   position: relative;
   float: right;
-  right: 80px;
+  right: 100px;
 }
 
 .commend-items {

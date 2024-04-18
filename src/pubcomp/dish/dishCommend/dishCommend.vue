@@ -58,12 +58,12 @@ onMounted(async () => {
 
 })
 
-const pageReq = <pageRequest>{
-  page: 1,
-  pageSize: 10,
-  openid: userStore.userInfo.openid,
-  supply: 0
-}
+// const pageReq = <pageRequest>{
+//   page: 1,
+//   pageSize: 10,
+//   openid: userStore.userInfo.openid,
+//   supply: 0
+// }
 
 let checked = -1;
 
