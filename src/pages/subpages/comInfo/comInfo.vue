@@ -126,11 +126,15 @@ const replyButton = () => {
       <!-- <image class="icons mar-rig" src="@/static/icons/eye.png" /><span>{{ comment?.agree }}&emsp;</span> -->
     </view>
 
-    <navigator v-if="!isForum" class="dish-card" :url="`/pages/subpages/dishInfo/dishInfo?dishId=${comment?.dishId}&&isStar=${comment?.isStar}`">
+    <!-- 美食卡片 -->
+    <navigator v-if="!isForum && comment?.dishId!='null'" class="dish-card" :url="`/pages/subpages/dishInfo/dishInfo?dishId=${comment?.dishId}&&isStar=${comment?.isStar}`">
       <image :src="comment?.image" class="dish-img" mode="aspectFill" />
       <uni-icons class="rig-icon" color="#808080" type="right" size="20"></uni-icons>
       <span class="card-name">{{ comment?.dishName }}</span>
     </navigator>
+    
+    <!-- 推荐的补充信息 -->
+    <view v-if="comment?.dishId === 'null'" class="pos-sup">位置：{{ comment.notes }}</view>
 
     <!-- 用户的回复 -->
     <view class="tit">评论/提问回复</view>
@@ -183,6 +187,14 @@ const replyButton = () => {
   border: #c0c0c0 solid 1px;
   width: 75%;
   position: relative;
+}
+.pos-sup{
+  margin: 5px 10px 10px 42px;
+  width: 75%;
+  border-top: #c0c0c0 solid 1px;
+  position: relative;
+  /* font-size: small; */
+  color: #ffb6c1;
 }
 .card-name{
   position: relative;

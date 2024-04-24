@@ -34,7 +34,9 @@ export type commentsItem = {
     /** 标签序号 */
     tags: string,
     /** 标签列表 */
-    tagList: number[]
+    tagList: number[],
+    /** 推荐的位置补充信息 */
+    notes: string,
 }
 
 // 回复信息类型
@@ -112,6 +114,8 @@ export type newCommentParam = {
     /**哪一个菜品的评价 */
     dishId: string,
     /** 谁发布的 */
-    openid: string
+    openid: string,
+    /** 直接推荐备注 */
+    notes: string
 }
 

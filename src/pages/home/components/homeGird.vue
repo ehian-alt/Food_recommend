@@ -15,6 +15,8 @@ onLoad(() => {
     })
 })
 
+let nopic = ref('https://jju-dish-recommend.oss-cn-hangzhou.aliyuncs.com/nopic.png');
+
 const pageReq = <pageRequest>({
     page: 1,
     pageSize: 10,
@@ -31,6 +33,7 @@ const getCommendItems = async () => {
     }
     let result = await commentItemListService(pageReq);
     commentItems.value.push(...result.data.items);
+    
     // 页数判断是否加载完成
     if (pageReq.page < result.data.pageCount) {
         pageReq.page += 1
@@ -64,7 +67,7 @@ defineExpose({
         <navigator class="aitems" v-for="item in commentItems" :key="item.id"
             :url="`/pages/subpages/comInfo/comInfo?commentId=${item.id}`">
             <!-- 图片 -->
-            <image class="img-item" :src="item.images[0]" mode="aspectFill" />
+            <image class="img-item" :src="item.images[0]===null?nopic:item.images[0]" mode="aspectFill" />
             <p class="text-item">{{ item.content }}</p>
             <!-- 头像 -->
             <image class="avatar-item" :src="item.avatarUrl" />

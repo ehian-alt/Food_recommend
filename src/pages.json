@@ -40,6 +40,12 @@
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
+		},
+		{
+			"path": "pages/addHomeRecommend/addHomeRecommend",
+			"style": {
+				"navigationBarTitleText": "我要推荐"
+			}
 		}
 	],
 	"tabBar": {
@@ -59,6 +65,12 @@
 				"text": "榜单",
 				"iconPath": "static/icons/like.png",
 				"selectedIconPath": "static/icons/like-fill.png"
+			},
+			{
+				"pagePath": "pages/addHomeRecommend/addHomeRecommend",
+				"text": "我要推荐",
+				"iconPath": "static/icons/plus-square.png",
+				"selectedIconPath": "static/icons/plus-square-fill.png"
 			},
 			{
 				"pagePath": "pages/forum/forum",

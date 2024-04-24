@@ -1,27 +1,10 @@
 <script lang="ts" setup>
 import type { newCommentParam } from '@/types/comments';
-import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { useuserStore } from '@/stores/user';
 import { newCommentService } from '@/services/comments';
-import { newForumService } from '@/services/forums';
 const userStore = useuserStore();
-interface param {
-  dishId: string,
-  // 是否comment
-  mode: string
-}
-const state = ref([
-  { value: 0, text: "否" },
-  { value: 1, text: "是" }
-])
-/** 论坛发帖是投票形势的吗 */
-const forumMode = ref([
-  { value: 0, text: "提问" },
-  { value: 1, text: "投票" }
-])
 
-const pageParam = ref<param>()
 const content = ref<string>()
 let imageValue: string[] = [];
 
@@ -30,11 +13,28 @@ const comData = ref<newCommentParam>({
   content: '',
   imagePath: [],
   rate: 3,
-  state: 0,
-  dishId: pageParam.value?.dishId as string,
+  state: 1,
+  dishId: 'null',
   openid: userStore.userInfo.openid,
-  notes:''
+  notes: ''
 })
+
+const valueSe = ref(-1)
+const sup = ref<string>()
+
+const range = [
+  { value: 0, text: '一食堂一楼' },
+  { value: 1, text: '一食堂二楼' },
+  { value: 2, text: '二食堂一楼' },
+  { value: 3, text: '三食堂一楼' },
+  { value: 4, text: '三食堂二楼' },
+  { value: 5, text: '三食堂三楼' },
+  { value: 6, text: '四食堂一楼' },
+  { value: 7, text: '四食堂二楼' },
+  { value: 8, text: '五食堂一楼' },
+  { value: 9, text: '五食堂二楼' },
+  { value: 10, text: '其他请在补充中写明' }
+]
 
 const select = (e: any) => {
   let t = e.tempFilePaths[0]
@@ -68,75 +68,58 @@ const getImagePaths = async () => {
 }
 
 const newComment = async (commentParam: newCommentParam) => {
+
   await newCommentService(commentParam);
-}
-const newForum = async (commentParam: newCommentParam) => {
-  await newForumService(commentParam);
 }
 
 const comfireComment = async () => {
   comData.value.content = content.value as string;
-  console.log(comData.value);
-  if (pageParam.value?.mode === "1") {
-    // 给菜品评价
-    // 上传云端
-    getImagePaths()
-    uni.showLoading({
-      title: '正在发送请求',
-      mask: true
+  if (comData.value.content === undefined || valueSe.value === -1) {
+    uni.showToast({
+      icon: 'error',
+      title: '请检查输入内容跟'
     })
-    setTimeout(() => {
-      newComment(comData.value);
-      uni.reLaunch({
-        url: '/pages/recommend/recommend',
-      })
-    }, 1000);
-
-  } else {
-    // 论坛发表，发送请求
-    newForum(comData.value);
-    uni.showLoading({
-      title: '正在发送请求',
-      mask: true
-    })
-    setTimeout(() => {
-      uni.reLaunch({
-        url: '/pages/forum/forum',
-      })
-    }, 1000);
+    return
   }
+  comData.value.notes = range[valueSe.value].text+sup.value;
+  console.log(comData.value);
+  // 给菜品评价
+
+  // 上传云端
+  getImagePaths()
+  uni.showLoading({
+    title: '正在发送请求',
+    mask: true
+  })
+  setTimeout(() => {
+    newComment(comData.value);
+    uni.reLaunch({
+      url: '/pages/home/home',
+    })
+  }, 1000);
 }
 
-onLoad((query) => {
-  // 通过 query 可以获取传递的参数
-  pageParam.value = query as param
-  comData.value.dishId = query?.dishId;
-});
 </script>
 
 <template>
   <view class="view-com pdlr">
     <textarea class="input-cont" v-model="content" placeholder="说点什么......" />
+    <view class="data-se">
+      <uni-data-select v-model="valueSe" :localdata="range" placeholder="请选择食堂"></uni-data-select>
+    </view>
+
+    <input class="view-com sup" v-model="sup" placeholder="位置补充信息。。" />
+
+    <view class="tip">"此评论将会在首页推荐给其他用户"</view>
   </view>
 
-  <view class="view-com forumMode" v-if="pageParam?.mode !== '1'">
-    <uni-data-checkbox v-model="comData.state" :localdata="forumMode"></uni-data-checkbox>
+  <view class="view-com pdlr">
+    <view class="rate">评分</view>
+    <uni-rate v-model="comData.rate" allow-half :is-fill="false" margin="20" />
   </view>
 
-  <view v-if="pageParam?.mode === '1'">
-    <view class="view-com pdlr">
-      <view class="rate">评分</view>
-      <uni-rate v-model="comData.rate" allow-half :is-fill="false" margin="20" />
-    </view>
-
-    <view class="view-com">
-      <uni-file-picker limit="3" @select="select" @delete="deleteImg" title="最多上传3张图片"></uni-file-picker>
-    </view>
-
-    <view class="view-com pdlr">
-      <span>是否推荐到首页</span>
-      <uni-data-checkbox class="setContain" v-model="comData.state" :localdata="state"></uni-data-checkbox>
-    </view>
+  <view class="view-com">
+    <uni-file-picker limit="3" @select="select" @delete="deleteImg" title="最多上传3张图片"></uni-file-picker>
   </view>
 
   <view class="fixed-footer">
@@ -147,9 +130,6 @@ onLoad((query) => {
 </template>
 
 <style scoped>
-.forumMode{
-  padding: 0 20px;
-}
 .view-com {
   width: 100%;
   margin: 10px 0;
@@ -167,12 +147,17 @@ onLoad((query) => {
   padding-right: 10px;
 }
 
-.mgr {
-  margin-left: 20px;
+.data-se {
+  width: 90%;
+}
+
+.sup{
+  height: auto;
+  width: 720rpx;
 }
 
 .input-cont {
-  height: 160px;
+  height: 100px;
   width: 720rpx;
 }
 
@@ -181,11 +166,6 @@ onLoad((query) => {
   width: 90%;
   background-color: #ffb6c1;
   color: #ffffff;
-}
-
-.setContain {
-  float: right;
-  text-align: right;
 }
 
 .fixed-footer {
@@ -197,5 +177,12 @@ onLoad((query) => {
   /* 底部栏的高度 */
   color: #808080;
   padding-bottom: 5px;
+}
+
+.tip {
+  text-align: center;
+  color: #ffb6c1;
+  margin: 15px 0 0;
+  font-size: small;
 }
 </style>
