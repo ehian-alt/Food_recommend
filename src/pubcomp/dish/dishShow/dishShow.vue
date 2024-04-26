@@ -37,7 +37,7 @@ const navigatorToLocation = () => {
     latitude: itude[dishInfo.value!.canteen-1][0], // 目标地点的纬度，浮点数，范围为-90~90
     longitude: itude[dishInfo.value!.canteen-1][1], // 目标地点的经度，浮点数，范围为-180~180
     scale: 18, // 缩放比例，范围5~18
-    name: "九江学院"+info.value.canteen, // 位置名
+    name: "九江学院"+info.value.canteen+"食堂", // 位置名
     address: dishInfo.value?.shopId[0]+"楼"+dishInfo.value?.shopId.substring(1, 3)+"号窗口", // 地址的详细说明
     success() {
       console.log('导航启动成功');

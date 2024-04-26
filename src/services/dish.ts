@@ -32,14 +32,14 @@ export const userStarDish = (openId:string, dishId:string, stars:boolean)=>{
     })
 }
 /**
- * 根据菜品id检索该菜品的评价
+ * 根据菜品id检索该菜品
  * @param dishId 
  * @returns 
  */
 export const dishInfoPage = (dishId:string) => {
     return http<dishItem>({
         method:'GET',
-        url:'/user/recommend?dishId='+dishId,
+        url:'/user/dishInfo?dishId='+dishId,
     })
 }
 /**
